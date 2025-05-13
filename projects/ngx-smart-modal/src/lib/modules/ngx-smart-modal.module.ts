@@ -6,15 +6,9 @@ import { NgxSmartModalService } from '../services/ngx-smart-modal.service';
 import { NgxSmartModalStackService } from '../services/ngx-smart-modal-stack.service';
 
 @NgModule({
-  declarations: [
-    NgxSmartModalComponent
-  ],
-  imports: [
-    CommonModule
-  ],
-  exports: [
-    NgxSmartModalComponent
-  ]
+  imports: [CommonModule, NgxSmartModalComponent],
+  exports: [NgxSmartModalComponent],
+  providers: [],
 })
 export class NgxSmartModalModule {
   /**
@@ -23,10 +17,7 @@ export class NgxSmartModalModule {
   public static forRoot(): ModuleWithProviders<NgxSmartModalModule> {
     return {
       ngModule: NgxSmartModalModule,
-      providers: [
-        NgxSmartModalService,
-        NgxSmartModalStackService
-      ]
+      providers: [NgxSmartModalService, NgxSmartModalStackService],
     };
   }
 
@@ -36,12 +27,9 @@ export class NgxSmartModalModule {
   public static forChild(): ModuleWithProviders<NgxSmartModalModule> {
     return {
       ngModule: NgxSmartModalModule,
-      providers: [
-        NgxSmartModalService,
-        NgxSmartModalStackService
-      ]
+      providers: [NgxSmartModalService, NgxSmartModalStackService],
     };
   }
 
-  constructor(public service: NgxSmartModalService) { }
+  constructor(public service: NgxSmartModalService) {}
 }

@@ -1,4 +1,4 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, NgIf, NgClass } from '@angular/common';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
@@ -18,52 +18,18 @@ import {
   Type,
   ViewChild,
   ViewChildren,
-  ViewContainerRef
+  ViewContainerRef,
 } from '@angular/core';
 import { NgxSmartModalConfig } from '../config/ngx-smart-modal.config';
 
 @Component({
   selector: 'ngx-smart-modal',
-  template: `
-  <div *ngIf="overlayVisible"
-       [style.z-index]="visible ? layerPosition-1 : -1"
-       [ngClass]="{'transparent':!backdrop, 'overlay':true, 'nsm-overlay-open':openedClass}"
-       (click)="dismiss($event)" #nsmOverlay>
-    <div [style.z-index]="visible ? layerPosition : -1"
-         [ngClass]="['nsm-dialog', customClass, openedClass ? 'nsm-dialog-open': 'nsm-dialog-close']" #nsmDialog
-         [attr.aria-hidden]="openedClass ? false : true"
-         [attr.aria-label]="ariaLabel"
-         [attr.aria-labelledby]="ariaLabelledBy"
-         [attr.aria-describedby]="ariaDescribedBy">
-      <div class="nsm-content" #nsmContent>
-        <div class="nsm-body">
-          <ng-template #dynamicContent></ng-template>
-          <ng-content></ng-content>
-        </div>
-        <button type="button" *ngIf="closable" (click)="close()" aria-label="Close" class="nsm-dialog-btn-close">
-          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 512 512"
-               xml:space="preserve" width="16px" height="16px" role="img" aria-labelledby="closeIconTitle closeIconDesc">
-            <title id="closeIconTitle">Close Icon</title>
-            <desc id="closeIconDesc">A light-gray close icon used to close the modal</desc>
-            <g>
-              <path d="M505.943,6.058c-8.077-8.077-21.172-8.077-29.249,0L6.058,476.693c-8.077,8.077-8.077,21.172,0,29.249    C10.096,509.982,15.39,512,20.683,512c5.293,0,10.586-2.019,14.625-6.059L505.943,35.306    C514.019,27.23,514.019,14.135,505.943,6.058z"
-                    fill="currentColor"/>
-            </g>
-            <g>
-              <path d="M505.942,476.694L35.306,6.059c-8.076-8.077-21.172-8.077-29.248,0c-8.077,8.076-8.077,21.171,0,29.248l470.636,470.636    c4.038,4.039,9.332,6.058,14.625,6.058c5.293,0,10.587-2.019,14.624-6.057C514.018,497.866,514.018,484.771,505.942,476.694z"
-                    fill="currentColor"/>
-            </g>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-`,
-  styles: [
-  ]
+  standalone: true,
+  imports: [NgIf, NgClass],
+  templateUrl: './ngx-smart-modal.component.html',
+  styles: [],
 })
 export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewChecked {
-
   @Input() public closable = true;
   @Input() public escapable = true;
   @Input() public dismissable = true;
@@ -106,7 +72,8 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
   @ViewChildren('nsmContent') private nsmContent!: QueryList<ElementRef>;
   @ViewChildren('nsmDialog') public nsmDialog!: QueryList<ElementRef>;
   @ViewChildren('nsmOverlay') private nsmOverlay!: QueryList<ElementRef>;
-  @ViewChild('dynamicContent', { read: ViewContainerRef }) private dynamicContentContainer!: ViewContainerRef;
+  @ViewChild('dynamicContent', { read: ViewContainerRef })
+  private dynamicContentContainer!: ViewContainerRef;
 
   constructor(
     private _renderer: Renderer2,
@@ -115,7 +82,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
     public readonly elementRef: ElementRef,
     @Inject(DOCUMENT) private _document: Document,
     @Inject(PLATFORM_ID) private _platformId: object,
-  ) { }
+  ) {}
 
   public ngOnInit() {
     if (!this.identifier || !this.identifier.length) {
@@ -126,12 +93,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   public ngAfterViewChecked() {
-    if (
-      this.overlayVisible &&
-      this.contentComponent &&
-      this.dynamicContentContainer &&
-      this.dynamicContentContainer.length === 0
-    ) {
+    if (this.overlayVisible && this.contentComponent && this.dynamicContentContainer && this.dynamicContentContainer.length === 0) {
       this.createDynamicContent();
     }
   }
@@ -301,7 +263,9 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
   public markForCheck() {
     try {
       this._changeDetectorRef.detectChanges();
-    } catch (e) { /* empty */ }
+    } catch (e) {
+      /* empty */
+    }
 
     this._changeDetectorRef.markForCheck();
   }
@@ -329,11 +293,11 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
     const marginLeft = parseInt(getComputedStyle(this.nsmContent.first.nativeElement).marginLeft, 10);
     const marginTop = parseInt(getComputedStyle(this.nsmContent.first.nativeElement).marginTop, 10);
 
-    let offsetTop = targetElementRect.top - nsmDialogRect.top - ((nsmContentRect.height - targetElementRect.height) / 2);
-    let offsetLeft = targetElementRect.left - nsmDialogRect.left - ((nsmContentRect.width - targetElementRect.width) / 2);
+    let offsetTop = targetElementRect.top - nsmDialogRect.top - (nsmContentRect.height - targetElementRect.height) / 2;
+    let offsetLeft = targetElementRect.left - nsmDialogRect.left - (nsmContentRect.width - targetElementRect.width) / 2;
 
-    if (offsetLeft + nsmDialogRect.left + nsmContentRect.width + (marginLeft * 2) > bodyRect.width) {
-      offsetLeft = bodyRect.width - (nsmDialogRect.left + nsmContentRect.width) - (marginLeft * 2);
+    if (offsetLeft + nsmDialogRect.left + nsmContentRect.width + marginLeft * 2 > bodyRect.width) {
+      offsetLeft = bodyRect.width - (nsmDialogRect.left + nsmContentRect.width) - marginLeft * 2;
     } else if (offsetLeft + nsmDialogRect.left < 0) {
       offsetLeft = -nsmDialogRect.left;
     }
@@ -353,10 +317,12 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
 
     const data = {
       extraData: extraData,
-      instance: { id: this.identifier, modal: this }
+      instance: { id: this.identifier, modal: this },
     };
 
-    const event = new CustomEvent(NgxSmartModalConfig.prefixEvent + name, { detail: data });
+    const event = new CustomEvent(NgxSmartModalConfig.prefixEvent + name, {
+      detail: data,
+    });
 
     return window.dispatchEvent(event);
   }
@@ -395,5 +361,4 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
       Object.assign(this._data, componentRef.instance);
     }
   }
-
 }

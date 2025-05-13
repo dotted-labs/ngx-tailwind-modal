@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { ModalInstance } from './modal-instance';
 import { NgxSmartModalComponent } from '../components/ngx-smart-modal.component';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NgxSmartModalStackService {
   private _modalStack: ModalInstance[];
 
@@ -21,7 +23,9 @@ export class NgxSmartModalStackService {
    */
   public addModal(modalInstance: ModalInstance, force?: boolean): void {
     if (force) {
-      const i: number = this._modalStack.findIndex((o: ModalInstance) => o.id === modalInstance.id);
+      const i: number = this._modalStack.findIndex(
+        (o: ModalInstance) => o.id === modalInstance.id
+      );
       if (i > -1) {
         this._modalStack[i].modal = modalInstance.modal;
       } else {
@@ -77,7 +81,11 @@ export class NgxSmartModalStackService {
 
     return this.getOpenedModals()
       .map((o: ModalInstance) => o.modal)
-      .reduce((highest, item) => item.layerPosition > highest.layerPosition ? item : highest, this.getOpenedModals()[0].modal);
+      .reduce(
+        (highest, item) =>
+          item.layerPosition > highest.layerPosition ? item : highest,
+        this.getOpenedModals()[0].modal
+      );
   }
 
   /**
@@ -88,7 +96,9 @@ export class NgxSmartModalStackService {
    * @returns a higher index from all the existing modal instances.
    */
   public getHigherIndex(): number {
-    return Math.max(...this._modalStack.map((o) => o.modal.layerPosition), 1041) + 1;
+    return (
+      Math.max(...this._modalStack.map((o) => o.modal.layerPosition), 1041) + 1
+    );
   }
 
   /**
@@ -108,7 +118,9 @@ export class NgxSmartModalStackService {
    * @returns the removed modal instance.
    */
   public removeModal(id: string): undefined | ModalInstance {
-    const i: number = this._modalStack.findIndex((o: any) => o.id === id);
+    const i: number = this._modalStack.findIndex(
+      (o: ModalInstance) => o.id === id
+    );
     if (i < 0) {
       return;
     }

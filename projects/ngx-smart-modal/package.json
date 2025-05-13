@@ -1,40 +1,36 @@
 {
-  "name": "ngx-smart-modal",
-  "version": "14.0.3",
-  "description": "Smart modal handler to manage modals and data everywhere in Angular apps.",
-  "author": "Maxime LAFARIE <maxime.lafarie@gmail.com>",
+  "name": "@dotted-labs/ngx-daisy-modal",
+  "version": "0.0.1",
+  "description": "Daisy and Tailwind CSS modal handler to manage modals and data everywhere in Angular apps.",
+  "author": "Dotted Labs <info@dottedlabs.dev>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maximelafarie/ngx-smart-modal.git"
+    "url": "https://github.com/dotted-labs/ngx-daisy-modal.git"
   },
   "bugs": {
-    "url": "https://github.com/maximelafarie/ngx-smart-modal/issues"
+    "url": "https://github.com/dotted-labs/ngx-daisy-modal/issues"
   },
-  "homepage": "https://github.com/maximelafarie/ngx-smart-modal",
+  "homepage": "https://github.com/dotted-labs/ngx-daisy-modal",
   "keywords": [
-    "ngx-smart-modal",
-    "ngxsm",
-    "nsm",
-    "ngx",
-    "smart",
-    "modal",
+    "@dotted-labs/ngx-daisy-modal",
+    "ngx-daisy-modal",
+    "daisy-modal",
     "typescript",
     "angular"
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": ">=14.2.0",
-    "@angular/core": ">=14.2.0",
-    "@angular/platform-browser": ">=14.2.0",
-    "zone.js": ">=0.11.4"
+    "@angular/common": ">=19.0.0",
+    "@angular/core": ">=19.0.0",
+    "@angular/platform-browser": ">=19.0.0",
+    "zone.js": ">=0.15.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.6.2"
   },
   "exports": {
     "./styles": {
-      "sass": "./styles/ngx-smart-modal.scss",
-      "css": "./styles/ngx-smart-modal.css"
+      "css": "./styles/ngx-daisy-modal.css"
     }
   }
 }
