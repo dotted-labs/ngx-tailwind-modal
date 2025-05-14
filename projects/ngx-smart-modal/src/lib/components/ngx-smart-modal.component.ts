@@ -1,4 +1,4 @@
-import { DOCUMENT, isPlatformBrowser, NgIf, NgClass } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, NgIf, NgClass, CommonModule } from '@angular/common';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
@@ -25,7 +25,7 @@ import { NgxSmartModalConfig } from '../config/ngx-smart-modal.config';
 @Component({
   selector: 'ngx-smart-modal',
   standalone: true,
-  imports: [NgIf, NgClass],
+  imports: [CommonModule],
   templateUrl: './ngx-smart-modal.component.html',
   styles: [],
 })
