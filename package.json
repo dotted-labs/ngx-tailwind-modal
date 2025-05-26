@@ -4,8 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "build:lib": "ng build --project ngx-tailwind-modal",
+    "build:lib:watch": "ng build --project ngx-tailwind-modal --watch --configuration development",
+    "build:demo": "ng build --project demo",
+    "build:demo:watch": "ng build --project demo --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix"
