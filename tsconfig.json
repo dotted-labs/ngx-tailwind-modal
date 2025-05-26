@@ -12,9 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "@dotted-labs/ngx-daisy-modal": [
-        "projects/ngx-smart-modal/src/public-api"
-      ]
+      "@dotted-labs/ngx-tailwind-modal": ["projects/ngx-tailwind-modal/src/public-api"]
     },
     "declaration": false,
     "downlevelIteration": true,

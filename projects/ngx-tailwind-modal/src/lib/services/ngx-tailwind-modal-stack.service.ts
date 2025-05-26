@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { ModalInstance } from './modal-instance';
-import { NgxSmartModalComponent } from '../components/ngx-smart-modal.component';
+import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NgxSmartModalStackService {
+export class NgxTailwindModalStackService {
   private _modalStack: ModalInstance[];
 
   constructor() {
@@ -23,9 +23,7 @@ export class NgxSmartModalStackService {
    */
   public addModal(modalInstance: ModalInstance, force?: boolean): void {
     if (force) {
-      const i: number = this._modalStack.findIndex(
-        (o: ModalInstance) => o.id === modalInstance.id
-      );
+      const i: number = this._modalStack.findIndex((o: ModalInstance) => o.id === modalInstance.id);
       if (i > -1) {
         this._modalStack[i].modal = modalInstance.modal;
       } else {
@@ -41,11 +39,26 @@ export class NgxSmartModalStackService {
    *
    * @param id The modal identifier used at creation time.
    */
-  public getModal(id: string): NgxSmartModalComponent {
+  public getModal(id: string): NgxTailwindModalComponent {
     const i = this._modalStack.find((o: ModalInstance) => o.id === id);
 
     if (i !== undefined) {
       return i.modal;
+    } else {
+      throw new Error(`Cannot find modal with identifier ${id}`);
+    }
+  }
+
+  /**
+   * Retrieve a modal instance by its identifier.
+   *
+   * @param id The modal identifier used at creation time.
+   */
+  public getModalInstance(id: string): ModalInstance {
+    const i = this._modalStack.find((o: ModalInstance) => o.id === id);
+
+    if (i !== undefined) {
+      return i;
     } else {
       throw new Error(`Cannot find modal with identifier ${id}`);
     }
@@ -74,18 +87,14 @@ export class NgxSmartModalStackService {
    *
    * @returns the opened modal with highest z-index.
    */
-  public getTopOpenedModal(): NgxSmartModalComponent {
+  public getTopOpenedModal(): NgxTailwindModalComponent {
     if (!this.getOpenedModals().length) {
       throw new Error('No modal is opened');
     }
 
     return this.getOpenedModals()
       .map((o: ModalInstance) => o.modal)
-      .reduce(
-        (highest, item) =>
-          item.layerPosition > highest.layerPosition ? item : highest,
-        this.getOpenedModals()[0].modal
-      );
+      .reduce((highest, item) => (item.layerPosition > highest.layerPosition ? item : highest), this.getOpenedModals()[0].modal);
   }
 
   /**
@@ -96,9 +105,7 @@ export class NgxSmartModalStackService {
    * @returns a higher index from all the existing modal instances.
    */
   public getHigherIndex(): number {
-    return (
-      Math.max(...this._modalStack.map((o) => o.modal.layerPosition), 1041) + 1
-    );
+    return Math.max(...this._modalStack.map((o) => o.modal.layerPosition), 1041) + 1;
   }
 
   /**
@@ -118,9 +125,7 @@ export class NgxSmartModalStackService {
    * @returns the removed modal instance.
    */
   public removeModal(id: string): undefined | ModalInstance {
-    const i: number = this._modalStack.findIndex(
-      (o: ModalInstance) => o.id === id
-    );
+    const i: number = this._modalStack.findIndex((o: ModalInstance) => o.id === id);
     if (i < 0) {
       return;
     }

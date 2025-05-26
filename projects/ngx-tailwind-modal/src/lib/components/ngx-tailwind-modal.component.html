@@ -9,7 +9,6 @@
       'w-screen': true,
     }"
     class="z-1040 block w-screen h-screen"
-    (click)="dismiss($event)"
     #nsmOverlay
   >
     <div
@@ -21,7 +20,7 @@
       [attr.aria-labelledby]="ariaLabelledBy"
       [attr.aria-describedby]="ariaDescribedBy"
     >
-      <div class="modal" #nsmContent open>
+      <dialog class="modal" #nsmContent open>
         <div class="modal-box relative">
           <div class="relative" #nsmContent>
             <ng-template #dynamicContent></ng-template>
@@ -32,7 +31,10 @@
           }
           <div class="modal-action"></div>
         </div>
-      </div>
+        <form method="dialog" class="modal-backdrop" (click)="dismiss($event)">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   </div>
 }

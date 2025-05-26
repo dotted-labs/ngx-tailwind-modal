@@ -5,7 +5,7 @@ This library was generated with [Angular CLI](https://github.com/angular/angular
 ## Installation
 
 ```bash
-npm install ngx-smart-modal --save
+npm install ngx-tailwind-modal --save
 ```
 
 ## Usage
@@ -16,8 +16,8 @@ For Angular 14+ applications using standalone components, you can use the `provi
 
 ```typescript
 // In app.config.ts
-import { ApplicationConfig } from "@angular/core";
-import { provideNgxSmartModal } from "@dotted-labs/ngx-daisy-modal";
+import { ApplicationConfig } from '@angular/core';
+import { provideNgxSmartModal } from '@dotted-labs/ngx-tailwind-modal';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +32,7 @@ export const appConfig: ApplicationConfig = {
 If you're still using NgModule, import the NgxSmartModalModule:
 
 ```typescript
-import { NgxSmartModalModule } from "@dotted-labs/ngx-daisy-modal";
+import { NgxSmartModalModule } from '@dotted-labs/ngx-tailwind-modal';
 
 @NgModule({
   imports: [
@@ -46,21 +46,21 @@ export class AppModule {}
 
 ## Code scaffolding
 
-Run `ng generate component component-name --project ngx-smart-modal` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-smart-modal`.
+Run `ng generate component component-name --project ngx-tailwind-modal` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-tailwind-modal`.
 
-> Note: Don't forget to add `--project ngx-smart-modal` or else it will be added to the default project in your `angular.json` file.
+> Note: Don't forget to add `--project ngx-tailwind-modal` or else it will be added to the default project in your `angular.json` file.
 
 ## Build
 
-Run `ng build ngx-smart-modal` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `ng build ngx-tailwind-modal` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 ## Publishing
 
-After building your library with `ng build ngx-smart-modal`, go to the dist folder `cd dist/ngx-smart-modal` and run `npm publish`.
+After building your library with `ng build ngx-tailwind-modal`, go to the dist folder `cd dist/ngx-tailwind-modal` and run `npm publish`.
 
 ## Running unit tests
 
-Run `ng test ngx-smart-modal` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `ng test ngx-tailwind-modal` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Further help
 

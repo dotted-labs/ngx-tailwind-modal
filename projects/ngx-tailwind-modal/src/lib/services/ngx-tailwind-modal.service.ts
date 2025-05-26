@@ -1,25 +1,34 @@
-import { ApplicationRef, EmbeddedViewRef, Inject, Injectable, Injector, PLATFORM_ID, TemplateRef, Type, ViewContainerRef } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { NgxSmartModalComponent } from '../components/ngx-smart-modal.component';
-import { INgxSmartModalOptions, NgxSmartModalConfig } from '../config/ngx-smart-modal.config';
-import { NgxSmartModalStackService } from './ngx-smart-modal-stack.service';
+import {
+  ApplicationRef,
+  createComponent,
+  EmbeddedViewRef,
+  Inject,
+  Injectable,
+  Injector,
+  PLATFORM_ID,
+  TemplateRef,
+  Type,
+} from '@angular/core';
+import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.component';
 import { ModalInstance } from './modal-instance';
+import { NgxTailwindModalStackService } from './ngx-tailwind-modal-stack.service';
+import { INgxTailwindModalOptions, NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
 
 export type Content<T> = string | TemplateRef<T> | Type<T>;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class NgxSmartModalService {
-  private lastElementFocused: any;
+export class NgxTailwindModalService {
+  private lastElementFocused: HTMLElement | null = null;
 
   constructor(
     private _appRef: ApplicationRef,
     private _injector: Injector,
-    private _modalStack: NgxSmartModalStackService,
-    private applicationRef: ApplicationRef,
-    @Inject(DOCUMENT) private _document: any,
-    @Inject(PLATFORM_ID) private _platformId: any
+    private _modalStack: NgxTailwindModalStackService,
+    @Inject(DOCUMENT) private _document: Document,
+    @Inject(PLATFORM_ID) private _platformId: object,
   ) {
     this._addEvents();
   }
@@ -41,17 +50,12 @@ export class NgxSmartModalService {
    *
    * @param id The modal identifier used at creation time.
    */
-  public getModal(id: string): NgxSmartModalComponent {
+  public getModal(id: string): NgxTailwindModalComponent {
     return this._modalStack.getModal(id);
   }
 
-  /**
-   * Alias of `getModal` to retrieve a modal instance by its identifier.
-   *
-   * @param id The modal identifier used at creation time.
-   */
-  public get(id: string): NgxSmartModalComponent {
-    return this.getModal(id);
+  public getModalInstance(id: string): ModalInstance | undefined {
+    return this._modalStack.getModalInstance(id);
   }
 
   /**
@@ -61,7 +65,12 @@ export class NgxSmartModalService {
    * @param force Tell the modal to open top of all other opened modals
    */
   public open(id: string, force = false): boolean {
-    return this._openModal(this.get(id), force);
+    const modalInstance = this.getModalInstance(id);
+    if (modalInstance) {
+      return this._openModal(modalInstance, force);
+    }
+
+    return false;
   }
 
   /**
@@ -70,7 +79,12 @@ export class NgxSmartModalService {
    * @param id The modal identifier used at creation time.
    */
   public close(id: string): boolean {
-    return this._closeModal(this.get(id));
+    const modalInstance = this.getModalInstance(id);
+    if (modalInstance) {
+      return this._closeModal(modalInstance);
+    }
+
+    return false;
   }
 
   /**
@@ -78,7 +92,7 @@ export class NgxSmartModalService {
    */
   public closeAll(): void {
     this.getOpenedModals().forEach((instance: ModalInstance) => {
-      this._closeModal(instance.modal);
+      this._closeModal(instance);
     });
   }
 
@@ -90,7 +104,12 @@ export class NgxSmartModalService {
    * @param force Tell the modal to open top of all other opened modals
    */
   public toggle(id: string, force = false): boolean {
-    return this._toggleModal(this.get(id), force);
+    const modalInstance = this.getModalInstance(id);
+    if (modalInstance) {
+      return this._toggleModal(modalInstance, force);
+    }
+
+    return false;
   }
 
   /**
@@ -116,7 +135,7 @@ export class NgxSmartModalService {
    *
    * @returns the opened modal with highest z-index.
    */
-  public getTopOpenedModal(): NgxSmartModalComponent {
+  public getTopOpenedModal(): NgxTailwindModalComponent {
     return this._modalStack.getTopOpenedModal();
   }
 
@@ -164,8 +183,8 @@ export class NgxSmartModalService {
    * @param force If true, overrides the previous stored data if there was.
    * @returns true if the given modal exists and the process has been tried, either false.
    */
-  public setModalData(data: any, id: string, force?: boolean): boolean {
-    const modal = this.get(id);
+  public setModalData(data: unknown, id: string, force?: boolean): boolean {
+    const modal = this.getModal(id);
     if (modal) {
       modal.setData(data, force);
       return true;
@@ -181,7 +200,7 @@ export class NgxSmartModalService {
    * @returns the associated modal data.
    */
   public getModalData(id: string): unknown {
-    const modal = this.get(id);
+    const modal = this.getModal(id);
     if (modal) {
       return modal.getData();
     }
@@ -213,44 +232,76 @@ export class NgxSmartModalService {
   }
 
   /**
-   * Create dynamic NgxSmartModalComponent
-   * @param vcr A ViewContainerRef reference
+   * Create dynamic NgxTailwindModalComponent
    * @param id The modal identifier used at creation time
    * @param content The modal content (string, templateRef or Component)
-   * @param options Any NgxSmartModalComponent available options
+   * @param options Any NgxTailwindModalComponent available options
    */
-  public create<T>(id: string, content: Content<T>, vcr: ViewContainerRef, options: INgxSmartModalOptions = {}) {
+  public create<T>(id: string, content: Content<T>, options: INgxTailwindModalOptions = {}) {
     try {
       return this.getModal(id);
     } catch (e) {
       const ngContent = this._resolveNgContent(content);
+      // Get an `EnvironmentInjector` instance from the `ApplicationRef`.
+      const environmentInjector = this._appRef.injector;
 
-      const componentRef = vcr.createComponent(NgxSmartModalComponent, { injector: this._injector, projectableNodes: ngContent });
+      // We can now create a `ComponentRef` instance using Angular 19 API.
+      const componentRef = createComponent(NgxTailwindModalComponent, {
+        environmentInjector,
+        projectableNodes: ngContent,
+      });
 
       if (content instanceof Type) {
+        console.log(content);
         componentRef.instance.contentComponent = content;
       }
 
       componentRef.instance.identifier = id;
       componentRef.instance.createFrom = 'service';
 
-      if (typeof options.closable === 'boolean') { componentRef.instance.closable = options.closable; }
-      if (typeof options.escapable === 'boolean') { componentRef.instance.escapable = options.escapable; }
-      if (typeof options.dismissable === 'boolean') { componentRef.instance.dismissable = options.dismissable; }
-      if (typeof options.customClass === 'string') { componentRef.instance.customClass = options.customClass; }
-      if (typeof options.backdrop === 'boolean') { componentRef.instance.backdrop = options.backdrop; }
-      if (typeof options.force === 'boolean') { componentRef.instance.force = options.force; }
-      if (typeof options.hideDelay === 'number') { componentRef.instance.hideDelay = options.hideDelay; }
-      if (typeof options.autostart === 'boolean') { componentRef.instance.autostart = options.autostart; }
-      if (typeof options.target === 'string') { componentRef.instance.target = options.target; }
-      if (typeof options.ariaLabel === 'string') { componentRef.instance.ariaLabel = options.ariaLabel; }
-      if (typeof options.ariaLabelledBy === 'string') { componentRef.instance.ariaLabelledBy = options.ariaLabelledBy; }
-      if (typeof options.ariaDescribedBy === 'string') { componentRef.instance.ariaDescribedBy = options.ariaDescribedBy; }
-      if (typeof options.refocus === 'boolean') { componentRef.instance.refocus = options.refocus; }
+      if (typeof options.closable === 'boolean') {
+        componentRef.instance.closable = options.closable;
+      }
+      if (typeof options.escapable === 'boolean') {
+        componentRef.instance.escapable = options.escapable;
+      }
+      if (typeof options.dismissable === 'boolean') {
+        componentRef.instance.dismissable = options.dismissable;
+      }
+      if (typeof options.customClass === 'string') {
+        componentRef.instance.customClass = options.customClass;
+      }
+      if (typeof options.backdrop === 'boolean') {
+        componentRef.instance.backdrop = options.backdrop;
+      }
+      if (typeof options.force === 'boolean') {
+        componentRef.instance.force = options.force;
+      }
+      if (typeof options.hideDelay === 'number') {
+        componentRef.instance.hideDelay = options.hideDelay;
+      }
+      if (typeof options.autostart === 'boolean') {
+        componentRef.instance.autostart = options.autostart;
+      }
+      if (typeof options.target === 'string') {
+        componentRef.instance.target = options.target;
+      }
+      if (typeof options.ariaLabel === 'string') {
+        componentRef.instance.ariaLabel = options.ariaLabel;
+      }
+      if (typeof options.ariaLabelledBy === 'string') {
+        componentRef.instance.ariaLabelledBy = options.ariaLabelledBy;
+      }
+      if (typeof options.ariaDescribedBy === 'string') {
+        componentRef.instance.ariaDescribedBy = options.ariaDescribedBy;
+      }
+      if (typeof options.refocus === 'boolean') {
+        componentRef.instance.refocus = options.refocus;
+      }
 
-      const domElem = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+      const domElem = (componentRef.hostView as EmbeddedViewRef<NgxTailwindModalComponent>).rootNodes[0] as HTMLElement;
+      this._appRef.attachView(componentRef.hostView);
       this._document.body.appendChild(domElem);
-
       return componentRef.instance;
     }
   }
@@ -260,28 +311,28 @@ export class NgxSmartModalService {
       return false;
     }
 
-    window.addEventListener(NgxSmartModalConfig.prefixEvent + 'create', ((e: CustomEvent) => {
+    window.addEventListener(NgxTailwindModalConfig.prefixEvent + 'create', ((e: CustomEvent) => {
       this._initModal(e.detail.instance);
     }) as EventListener);
 
-    window.addEventListener(NgxSmartModalConfig.prefixEvent + 'delete', ((e: CustomEvent) => {
+    window.addEventListener(NgxTailwindModalConfig.prefixEvent + 'delete', ((e: CustomEvent) => {
       this._deleteModal(e.detail.instance);
     }) as EventListener);
 
-    window.addEventListener(NgxSmartModalConfig.prefixEvent + 'open', ((e: CustomEvent) => {
-      this._openModal(e.detail.instance.modal, e.detail.extraData.top);
+    window.addEventListener(NgxTailwindModalConfig.prefixEvent + 'open', ((e: CustomEvent) => {
+      this._openModal(e.detail.instance, e.detail.extraData.top);
     }) as EventListener);
 
-    window.addEventListener(NgxSmartModalConfig.prefixEvent + 'toggle', ((e: CustomEvent) => {
-      this._toggleModal(e.detail.instance.modal, e.detail.extraData.top);
+    window.addEventListener(NgxTailwindModalConfig.prefixEvent + 'toggle', ((e: CustomEvent) => {
+      this._toggleModal(e.detail.instance, e.detail.extraData.top);
     }) as EventListener);
 
-    window.addEventListener(NgxSmartModalConfig.prefixEvent + 'close', ((e: CustomEvent) => {
-      this._closeModal(e.detail.instance.modal);
+    window.addEventListener(NgxTailwindModalConfig.prefixEvent + 'close', ((e: CustomEvent) => {
+      this._closeModal(e.detail.instance);
     }) as EventListener);
 
-    window.addEventListener(NgxSmartModalConfig.prefixEvent + 'dismiss', ((e: CustomEvent) => {
-      this._dismissModal(e.detail.instance.modal);
+    window.addEventListener(NgxTailwindModalConfig.prefixEvent + 'dismiss', ((e: CustomEvent) => {
+      this._dismissModal(e.detail.instance);
     }) as EventListener);
 
     window.addEventListener('keyup', this._escapeKeyboardEvent);
@@ -298,12 +349,14 @@ export class NgxSmartModalService {
     }
   }
 
-  private _openModal(modal: NgxSmartModalComponent, top?: boolean): boolean {
+  private _openModal(modalInstance: ModalInstance, top?: boolean): boolean {
+    const modal = modalInstance.modal;
+
     if (modal.visible) {
       return false;
     }
 
-    this.lastElementFocused = document.activeElement;
+    this.lastElementFocused = document.activeElement as HTMLElement;
 
     if (modal.escapable) {
       window.addEventListener('keyup', this._escapeKeyboardEvent);
@@ -342,15 +395,19 @@ export class NgxSmartModalService {
     return true;
   }
 
-  private _toggleModal(modal: NgxSmartModalComponent, top?: boolean): boolean {
+  private _toggleModal(modalInstance: ModalInstance, top?: boolean): boolean {
+    const modal = modalInstance.modal;
+
     if (modal.visible) {
-      return this._closeModal(modal);
+      return this._closeModal(modalInstance);
     } else {
-      return this._openModal(modal, top);
+      return this._openModal(modalInstance, top);
     }
   }
 
-  private _closeModal(modal: NgxSmartModalComponent): boolean {
+  private _closeModal(modalInstance: ModalInstance): boolean {
+    const modal = modalInstance.modal;
+
     if (!modal.openedClass) {
       return false;
     }
@@ -373,15 +430,18 @@ export class NgxSmartModalService {
       modal.markForCheck();
       modal.onCloseFinished.emit(modal);
       modal.onAnyCloseEventFinished.emit(modal);
-      if (modal.refocus) {
+      if (modal.refocus && this.lastElementFocused) {
         this.lastElementFocused.focus();
       }
+
+      this.removeModal(modalInstance.id);
     }, modal.hideDelay);
 
     return true;
   }
 
-  private _dismissModal(modal: NgxSmartModalComponent): boolean {
+  private _dismissModal(modalInstance: ModalInstance): boolean {
+    const modal = modalInstance.modal;
     if (!modal.openedClass) {
       return false;
     }
@@ -401,6 +461,7 @@ export class NgxSmartModalService {
       modal.markForCheck();
       modal.onDismissFinished.emit(modal);
       modal.onAnyCloseEventFinished.emit(modal);
+      this.removeModal(modalInstance.id);
     }, modal.hideDelay);
 
     return true;
@@ -418,15 +479,15 @@ export class NgxSmartModalService {
    * Resolve content according to the types
    * @param content The modal content (string, templateRef or Component)
    */
-  private _resolveNgContent<T>(content: Content<T>): any[][] | Text[][] {
+  private _resolveNgContent<T>(content: Content<T>): Node[][] {
     if (typeof content === 'string') {
       const element = this._document.createTextNode(content);
       return [[element]];
     }
 
     if (content instanceof TemplateRef) {
-      const viewRef = content.createEmbeddedView(null as any);
-      this.applicationRef.attachView(viewRef);
+      const viewRef = content.createEmbeddedView({} as T);
+      this._appRef.attachView(viewRef);
       return [viewRef.rootNodes];
     }
 
@@ -456,7 +517,7 @@ export class NgxSmartModalService {
     }
 
     return false;
-  }
+  };
 
   /**
    * Is current platform browser
@@ -487,12 +548,12 @@ export class NgxSmartModalService {
     }
 
     return false;
-  }
+  };
 
   /**
    * Remove dynamically created modal from DOM
    */
-  private _destroyModal(modal: NgxSmartModalComponent): void {
+  private _destroyModal(modal: NgxTailwindModalComponent): void {
     // Prevent destruction of the inline modals
     if (modal.createFrom !== 'service') {
       return;

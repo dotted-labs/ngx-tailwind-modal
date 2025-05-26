@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-/* @import '../../../dist/ngx-smart-modal/styles/ngx-smart-modal.css'; */
+/* @import '../../../dist/ngx-tailwind-modal/styles/ngx-tailwind-modal.css'; */
 
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui";

@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "@dotted-labs/ngx-daisy-modal": {
+    "@dotted-labs/ngx-tailwind-modal": {
       "projectType": "library",
-      "root": "projects/ngx-smart-modal",
-      "sourceRoot": "projects/ngx-smart-modal/src",
+      "root": "projects/ngx-tailwind-modal",
+      "sourceRoot": "projects/ngx-tailwind-modal/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/ngx-smart-modal/ng-package.json"
+            "project": "projects/ngx-tailwind-modal/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/ngx-smart-modal/tsconfig.lib.prod.json"
+              "tsConfig": "projects/ngx-tailwind-modal/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/ngx-smart-modal/tsconfig.lib.json"
+              "tsConfig": "projects/ngx-tailwind-modal/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,16 +27,16 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-smart-modal/src/test.ts",
-            "tsConfig": "projects/ngx-smart-modal/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-smart-modal/karma.conf.js",
+            "main": "projects/ngx-tailwind-modal/src/test.ts",
+            "tsConfig": "projects/ngx-tailwind-modal/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-tailwind-modal/karma.conf.js",
             "codeCoverage": true
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/ngx-smart-modal/src/**/*.ts"]
+            "lintFilePatterns": ["projects/ngx-tailwind-modal/src/**/*.ts"]
           }
         }
       }
@@ -56,10 +56,7 @@
             "browser": "projects/demo/src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "projects/demo/tsconfig.app.json",
-            "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets"
-            ],
+            "assets": ["projects/demo/src/favicon.ico", "projects/demo/src/assets"],
             "styles": ["projects/demo/src/styles.css"],
             "scripts": []
           },
@@ -110,16 +107,16 @@
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/demo/tsconfig.spec.json",
-            "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets"
-            ],
+            "assets": ["projects/demo/src/favicon.ico", "projects/demo/src/assets"],
             "styles": ["projects/demo/src/styles.css"],
             "scripts": []
           }
         }
       },
-      "dependencies": ["@dotted-labs/ngx-daisy-modal"]
+      "dependencies": ["@dotted-labs/ngx-tailwind-modal"]
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

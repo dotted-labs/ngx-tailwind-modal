@@ -1,4 +1,4 @@
-import { DOCUMENT, isPlatformBrowser, NgIf, NgClass, CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
@@ -20,16 +20,16 @@ import {
   ViewChildren,
   ViewContainerRef,
 } from '@angular/core';
-import { NgxSmartModalConfig } from '../config/ngx-smart-modal.config';
+import { NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
 
 @Component({
-  selector: 'ngx-smart-modal',
+  selector: 'ngx-tailwind-modal',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './ngx-smart-modal.component.html',
+  templateUrl: './ngx-tailwind-modal.component.html',
   styles: [],
 })
-export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() public closable = true;
   @Input() public escapable = true;
   @Input() public dismissable = true;
@@ -99,6 +99,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   public ngOnDestroy() {
+    console.log('ngOnDestroy');
     this._sendEvent('delete');
   }
 
@@ -108,7 +109,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    * @param top open the modal top of all other
    * @returns the modal component
    */
-  public open(top?: boolean): NgxSmartModalComponent {
+  public open(top?: boolean): NgxTailwindModalComponent {
     this._sendEvent('open', { top: top });
 
     return this;
@@ -119,7 +120,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    *
    * @returns the modal component
    */
-  public close(): NgxSmartModalComponent {
+  public close(): NgxTailwindModalComponent {
     this._sendEvent('close');
 
     return this;
@@ -131,10 +132,8 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    * @param e the event sent by the browser
    * @returns the modal component
    */
-  public dismiss(e: MouseEvent): NgxSmartModalComponent {
-    if (!this.dismissable || !(e?.target as Element)?.classList.contains('overlay')) {
-      return this;
-    }
+  public dismiss(e: MouseEvent): NgxTailwindModalComponent {
+    console.log('dismiss', e);
 
     this._sendEvent('dismiss');
 
@@ -147,7 +146,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    * @param top open the modal top of all other
    * @returns the modal component
    */
-  public toggle(top?: boolean): NgxSmartModalComponent {
+  public toggle(top?: boolean): NgxTailwindModalComponent {
     this._sendEvent('toggle', { top: top });
 
     return this;
@@ -159,7 +158,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    * @param className the class to add
    * @returns the modal component
    */
-  public addCustomClass(className: string): NgxSmartModalComponent {
+  public addCustomClass(className: string): NgxTailwindModalComponent {
     if (!this.customClass.length) {
       this.customClass = className;
     } else {
@@ -175,7 +174,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    * @param className the class to remove
    * @returns the modal component
    */
-  public removeCustomClass(className?: string): NgxSmartModalComponent {
+  public removeCustomClass(className?: string): NgxTailwindModalComponent {
     if (className) {
       this.customClass = this.customClass.replace(className, '').trim();
     } else {
@@ -206,7 +205,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    * @param force override potentially attached data
    * @returns the modal component
    */
-  public setData(data: unknown, force?: boolean): NgxSmartModalComponent {
+  public setData(data: unknown, force?: boolean): NgxTailwindModalComponent {
     if (!this.hasData() || (this.hasData() && force)) {
       this._data = data;
       this.assignModalDataToComponentData(this._componentRef);
@@ -230,7 +229,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    *
    * @returns the modal component
    */
-  public removeData(): NgxSmartModalComponent {
+  public removeData(): NgxTailwindModalComponent {
     this._data = undefined;
     this.onDataRemoved.emit(true);
     this.markForCheck();
@@ -243,8 +242,8 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    *
    * @returns the modal component
    */
-  public addBodyClass(): NgxSmartModalComponent {
-    this._renderer.addClass(this._document.body, NgxSmartModalConfig.bodyClassOpen);
+  public addBodyClass(): NgxTailwindModalComponent {
+    this._renderer.addClass(this._document.body, NgxTailwindModalConfig.bodyClassOpen);
 
     return this;
   }
@@ -254,8 +253,8 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
    *
    * @returns the modal component
    */
-  public removeBodyClass(): NgxSmartModalComponent {
-    this._renderer.removeClass(this._document.body, NgxSmartModalConfig.bodyClassOpen);
+  public removeBodyClass(): NgxTailwindModalComponent {
+    this._renderer.removeClass(this._document.body, NgxTailwindModalConfig.bodyClassOpen);
 
     return this;
   }
@@ -320,7 +319,7 @@ export class NgxSmartModalComponent implements OnInit, OnDestroy, AfterViewCheck
       instance: { id: this.identifier, modal: this },
     };
 
-    const event = new CustomEvent(NgxSmartModalConfig.prefixEvent + name, {
+    const event = new CustomEvent(NgxTailwindModalConfig.prefixEvent + name, {
       detail: data,
     });
 
