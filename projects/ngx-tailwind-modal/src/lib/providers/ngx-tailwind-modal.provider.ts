@@ -1,7 +1,6 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { NgxTailwindModalStackService } from '../services/ngx-tailwind-modal-stack.service';
 import { NgxTailwindModalService } from '../services/ngx-tailwind-modal.service';
-import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.component';
 
 /**
  * Provides the NgxTailwindModal services and components for standalone components/applications in Angular.
@@ -24,5 +23,5 @@ import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.comp
  * @returns Environment providers for NgxTailwindModal
  */
 export function provideNgxTailwindModal(): EnvironmentProviders {
-  return makeEnvironmentProviders([NgxTailwindModalService, NgxTailwindModalStackService, NgxTailwindModalComponent]);
+  return makeEnvironmentProviders([NgxTailwindModalService, NgxTailwindModalStackService]);
 }

@@ -33,7 +33,20 @@ npm install @dotted-labs/ngx-tailwind-modal
 npm install tailwindcss daisyui
 ```
 
-### 2. Configure the providers
+### 2. Configure to use with DaisyUI
+
+Add the following configuration to your `tailwind.config.js` file to ensure DaisyUI modal styles are included:
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  ...
+  safelist: ['modal', 'modal-backdrop', 'modal-box'],
+  ...
+};
+```
+
+### 3. Configure the providers
 
 In your `app.config.ts` (for standalone applications):
 
@@ -49,7 +62,7 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-### 3. Import the component
+### 4. Import the component
 
 Since this library uses standalone components, you need to import the component directly:
 

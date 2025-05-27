@@ -21,12 +21,15 @@ export class NgxTailwindModalStackService {
    * @param force Optional parameter that forces the overriding of modal instance if it already exists.
    * @returns nothing special.
    */
-  public addModal(modalInstance: ModalInstance): void {
-    const i: number = this._modalStack.findIndex((o: ModalInstance) => o.id === modalInstance.id);
-    if (i > -1) {
-      this._modalStack[i].modal = modalInstance.modal;
-    } else {
-      this._modalStack.push(modalInstance);
+  public addModal(modalInstance: ModalInstance, force?: boolean): void {
+    if (force) {
+      const i: number = this._modalStack.findIndex((o: ModalInstance) => o.id === modalInstance.id);
+      if (i > -1) {
+        this._modalStack[i].modal = modalInstance.modal;
+      } else {
+        this._modalStack.push(modalInstance);
+      }
+      return;
     }
     this._modalStack.push(modalInstance);
   }

@@ -1,6 +1,6 @@
 {
   "name": "@dotted-labs/ngx-tailwind-modal",
-  "version": "0.0.8",
+  "version": "0.0.12",
   "description": "Daisy and Tailwind CSS modal handler to manage modals and data everywhere in Angular apps.",
   "author": "Dotted Labs <info@dottedlabs.dev>",
   "private": false,
@@ -20,6 +20,9 @@
     "angular"
   ],
   "license": "MIT",
+  "scripts": {
+    "build:styles": "node build-styles.js"
+  },
   "peerDependencies": {
     "@angular/common": ">=19.0.0",
     "@angular/core": ">=19.0.0",
@@ -28,6 +31,12 @@
   },
   "dependencies": {
     "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "postcss": "^8.5.3",
+    "autoprefixer": "^10.4.0",
+    "tailwindcss": "^4.1.6",
+    "daisyui": "^5.0.35"
   },
   "exports": {
     "./styles": {

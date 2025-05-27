@@ -1,40 +1,40 @@
-@if (overlayVisible) {
+<!-- @if (overlayVisible) { -->
+<div
+  [style.z-index]="visible ? layerPosition - 1 : -1"
+  [ngClass]="{
+    'bg-transparent': !backdrop,
+    'fixed inset-0 overflow-x-hidden overflow-y-auto transition-colors duration-500': true,
+    'bg-black/50': openedClass && backdrop,
+    'h-screen': true,
+    'w-screen': true,
+  }"
+  class="z-1040 block w-screen h-screen"
+  #nsmOverlay
+>
   <div
-    [style.z-index]="visible ? layerPosition - 1 : -1"
-    [ngClass]="{
-      'bg-transparent': !backdrop,
-      'fixed inset-0 overflow-x-hidden overflow-y-auto transition-colors duration-500': true,
-      'bg-black/50': openedClass && backdrop,
-      'h-screen': true,
-      'w-screen': true,
-    }"
-    class="z-1040 block w-screen h-screen"
-    #nsmOverlay
+    [style.z-index]="visible ? layerPosition : -1"
+    [ngClass]="['relative outline-none', customClass, openedClass ? 'opacity-100 visible' : 'opacity-0']"
+    #nsmDialog
+    [attr.aria-hidden]="openedClass ? false : true"
+    [attr.aria-label]="ariaLabel"
+    [attr.aria-labelledby]="ariaLabelledBy"
+    [attr.aria-describedby]="ariaDescribedBy"
   >
-    <div
-      [style.z-index]="visible ? layerPosition : -1"
-      [ngClass]="['relative outline-none', customClass, openedClass ? 'opacity-100 visible' : 'opacity-0']"
-      #nsmDialog
-      [attr.aria-hidden]="openedClass ? false : true"
-      [attr.aria-label]="ariaLabel"
-      [attr.aria-labelledby]="ariaLabelledBy"
-      [attr.aria-describedby]="ariaDescribedBy"
-    >
-      <dialog class="modal" #nsmContent open>
-        <div class="modal-box relative">
-          <div class="relative" #nsmContent>
-            <ng-template #dynamicContent></ng-template>
-            <ng-content></ng-content>
-          </div>
-          @if (closable) {
-            <button type="button" (click)="close()" aria-label="Close" class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
-          }
-          <div class="modal-action"></div>
+    <dialog class="modal" #nsmContent open>
+      <div class="modal-box relative">
+        <div class="relative" #nsmContent>
+          <ng-template #dynamicContent></ng-template>
+          <ng-content></ng-content>
         </div>
-        <form method="dialog" class="modal-backdrop" (click)="dismiss($event)">
-          <button>close</button>
-        </form>
-      </dialog>
-    </div>
+        @if (closable) {
+          <button type="button" (click)="close()" aria-label="Close" class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+        }
+        <div class="modal-action"></div>
+      </div>
+      <form method="dialog" class="modal-backdrop" (click)="dismiss($event)">
+        <button>close</button>
+      </form>
+    </dialog>
   </div>
-}
+</div>
+<!-- } -->

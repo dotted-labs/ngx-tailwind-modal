@@ -24,10 +24,8 @@ import { NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
 
 @Component({
   selector: 'ngx-tailwind-modal',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './ngx-tailwind-modal.component.html',
-  styles: [],
 })
 export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() public closable = true;
@@ -37,6 +35,7 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
   @Input() public customClass = 'nsm-dialog-animation-fade';
   @Input() public visible = false;
   @Input() public backdrop = true;
+  @Input() public force = true;
   @Input() public hideDelay = 500;
   @Input() public autostart = false;
   @Input() public target = '';
@@ -85,7 +84,7 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
 
   public ngOnInit() {
     if (!this.identifier || !this.identifier.length) {
-      throw new Error('identifier field isn’t set. Please set one before calling <ngx-smart-modal> in a template.');
+      throw new Error('identifier field isn’t set. Please set one before calling <ngx-tailwind-modal> in a template.');
     }
 
     this._sendEvent('create');
@@ -201,13 +200,16 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
    * Attach data to the modal instance
    *
    * @param data the data to attach
+   * @param force override potentially attached data
    * @returns the modal component
    */
-  public setData(data: unknown): NgxTailwindModalComponent {
-    this._data = data;
-    this.assignModalDataToComponentData(this._componentRef);
-    this.onDataAdded.emit(this._data);
-    this.markForCheck();
+  public setData(data: unknown, force?: boolean): NgxTailwindModalComponent {
+    if (!this.hasData() || (this.hasData() && force)) {
+      this._data = data;
+      this.assignModalDataToComponentData(this._componentRef);
+      this.onDataAdded.emit(this._data);
+      this.markForCheck();
+    }
 
     return this;
   }

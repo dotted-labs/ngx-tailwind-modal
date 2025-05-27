@@ -10,7 +10,6 @@ import { ChildModalComponent } from './components/child-modal/child-modal.compon
 })
 export class AppComponent {
   private modalService = inject(NgxTailwindModalService);
-  private vcr = inject(ViewContainerRef);
 
   public openModal() {
     this.modalService.create(`modal-${Math.random()}`, ChildModalComponent, { dismissable: true }).open();
