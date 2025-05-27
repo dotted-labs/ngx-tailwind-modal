@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build:lib": "ng build --project ngx-tailwind-modal",
-    "build:lib:watch": "ng build --project ngx-tailwind-modal --watch --configuration development",
+    "build:lib": "ng build --project @dotted-labs/ngx-tailwind-modal",
+    "build:lib:watch": "ng build --project @dotted-labs/ngx-tailwind-modal --watch --configuration development",
     "build:demo": "ng build --project demo",
     "build:demo:watch": "ng build --project demo --watch --configuration development",
     "test": "ng test",
