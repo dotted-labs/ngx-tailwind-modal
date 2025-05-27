@@ -348,7 +348,7 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
    */
   private assignModalDataToComponentData(componentRef: ComponentRef<Component>): void {
     if (componentRef) {
-      Object.assign(componentRef.instance, this._data);
+      Object.assign(componentRef.instance, { id: this.identifier, modalInstance: this, ...this._data });
     }
   }
 
