@@ -121,6 +121,56 @@ export class AppComponent {
 }
 ```
 
+## 🎛️ Advanced Usage: Accessing Modal Instance
+
+If you need to access the modal instance and ID from within your modal component, you can extend the `NgxTailwindModalViewComponent` class. This gives you access to `modalId` and `modalInstance` properties.
+
+### Enhanced modal component:
+
+```typescript
+import { Component } from '@angular/core';
+import { NgxTailwindModalViewComponent } from '@ngx-tailwind-modal';
+
+@Component({
+  selector: 'app-my-enhanced-modal',
+  standalone: true,
+  template: `
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Enhanced Modal</h3>
+      <p class="py-4">Modal ID: {{ modalId }}</p>
+      <p class="py-4">You can now control the modal from within the component!</p>
+      <div class="modal-action">
+        <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+        <button class="btn btn-primary" (click)="toggleModal()">Toggle</button>
+      </div>
+    </div>
+  `,
+})
+export class MyEnhancedModalComponent extends NgxTailwindModalViewComponent {
+  closeModal() {
+    // Close the modal using the modal instance
+    this.modalInstance.close();
+  }
+
+  toggleModal() {
+    // Toggle the modal using the modal instance
+    this.modalInstance.toggle();
+  }
+
+  // You can also access other modal methods like:
+  // this.modalInstance.open()
+  // this.modalInstance.setData(data)
+  // this.modalInstance.getData()
+}
+```
+
+### Benefits of extending NgxTailwindModalViewComponent:
+
+- **Direct access** to the modal instance without injecting the service
+- **Modal ID** available as a property for identification
+- **Cleaner code** - no need to pass modal references manually
+- **Type safety** - Full TypeScript support for modal operations
+
 ## 🔧 Service API
 
 The `NgxTailwindModalService` provides several methods to manage your modals:
