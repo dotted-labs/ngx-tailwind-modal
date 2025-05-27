@@ -1,6 +1,6 @@
 {
   "name": "@dotted-labs/ngx-tailwind-modal",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Daisy and Tailwind CSS modal handler to manage modals and data everywhere in Angular apps.",
   "author": "Dotted Labs <info@dottedlabs.dev>",
   "private": false,

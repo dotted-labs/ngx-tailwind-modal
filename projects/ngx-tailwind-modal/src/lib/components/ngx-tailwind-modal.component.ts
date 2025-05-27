@@ -37,7 +37,6 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
   @Input() public customClass = 'nsm-dialog-animation-fade';
   @Input() public visible = false;
   @Input() public backdrop = true;
-  @Input() public force = true;
   @Input() public hideDelay = 500;
   @Input() public autostart = false;
   @Input() public target = '';
@@ -202,16 +201,13 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
    * Attach data to the modal instance
    *
    * @param data the data to attach
-   * @param force override potentially attached data
    * @returns the modal component
    */
-  public setData(data: unknown, force?: boolean): NgxTailwindModalComponent {
-    if (!this.hasData() || (this.hasData() && force)) {
-      this._data = data;
-      this.assignModalDataToComponentData(this._componentRef);
-      this.onDataAdded.emit(this._data);
-      this.markForCheck();
-    }
+  public setData(data: unknown): NgxTailwindModalComponent {
+    this._data = data;
+    this.assignModalDataToComponentData(this._componentRef);
+    this.onDataAdded.emit(this._data);
+    this.markForCheck();
 
     return this;
   }
