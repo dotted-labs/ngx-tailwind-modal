@@ -17,12 +17,12 @@ This library is designed for projects using **Tailwind CSS** and **DaisyUI**. Mo
 
 ## 🚀 Inspiration
 
-This library is a fork/inspiration from [ngx-smart-modal](https://github.com/maximelafarie/ngx-smart-modal), updated for Angular 19 and redesigned with Tailwind CSS and DaisyUI styles.
+This library is a fork from [ngx-smart-modal](https://github.com/maximelafarie/ngx-smart-modal), updated for Angular 19 and redesigned with Tailwind CSS and DaisyUI styles.
 
 ## 📦 Installation
 
 ```bash
-npm install @ngx-tailwind-modal
+npm install @dotted-labs/ngx-tailwind-modal
 ```
 
 ## 🛠️ Setup
@@ -149,26 +149,6 @@ const data = this.modalService.getModalData('myModal');
 
 // Create a modal programmatically
 this.modalService.create('dynamicModal', MyComponent, viewContainerRef);
-```
-
-## 🎨 DaisyUI Themes
-
-You can change your application theme and modals will adapt automatically:
-
-```html
-<html data-theme="dark">
-  <!-- Your application -->
-</html>
-```
-
-Or change the theme dynamically:
-
-```typescript
-// Change to dark theme
-document.documentElement.setAttribute('data-theme', 'dark');
-
-// Change to light theme
-document.documentElement.setAttribute('data-theme', 'light');
 ```
 
 ## 📚 Demo
