@@ -304,7 +304,7 @@ export class NgxTailwindModalService {
       this._document.body.appendChild(domElem);
 
       componentRef.instance.setData({
-        id: id,
+        modalId: id,
         modalInstance: componentRef.instance,
       });
 
