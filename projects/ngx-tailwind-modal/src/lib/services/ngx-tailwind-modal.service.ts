@@ -14,6 +14,7 @@ import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.comp
 import { ModalInstance } from './modal-instance';
 import { NgxTailwindModalStackService } from './ngx-tailwind-modal-stack.service';
 import { INgxTailwindModalOptions, NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
+import { NgxTailwindModalViewComponent } from '../components';
 
 export type Content<T> = string | TemplateRef<T> | Type<T>;
 
@@ -38,11 +39,10 @@ export class NgxTailwindModalService {
    * It stores an object that contains the given modal identifier and the modal itself directly in the `modalStack`.
    *
    * @param modalInstance The object that contains the given modal identifier and the modal itself.
-   * @param force Optional parameter that forces the overriding of modal instance if it already exists.
    * @returns nothing special.
    */
-  public addModal(modalInstance: ModalInstance, force?: boolean): void {
-    this._modalStack.addModal(modalInstance, force);
+  public addModal(modalInstance: ModalInstance): void {
+    this._modalStack.addModal(modalInstance);
   }
 
   /**
@@ -183,10 +183,10 @@ export class NgxTailwindModalService {
    * @param force If true, overrides the previous stored data if there was.
    * @returns true if the given modal exists and the process has been tried, either false.
    */
-  public setModalData(data: unknown, id: string, force?: boolean): boolean {
+  public setModalData(data: unknown, id: string): boolean {
     const modal = this.getModal(id);
     if (modal) {
-      modal.setData(data, force);
+      modal.setData(data);
       return true;
     } else {
       return false;
@@ -274,9 +274,6 @@ export class NgxTailwindModalService {
       if (typeof options.backdrop === 'boolean') {
         componentRef.instance.backdrop = options.backdrop;
       }
-      if (typeof options.force === 'boolean') {
-        componentRef.instance.force = options.force;
-      }
       if (typeof options.hideDelay === 'number') {
         componentRef.instance.hideDelay = options.hideDelay;
       }
@@ -299,14 +296,13 @@ export class NgxTailwindModalService {
         componentRef.instance.refocus = options.refocus;
       }
 
+      // Pass the modalId and modalInstance to the component instance
+      (componentRef.instance as unknown as NgxTailwindModalViewComponent).modalId = id;
+      (componentRef.instance as unknown as NgxTailwindModalViewComponent).modalInstance = componentRef.instance;
+
       const domElem = (componentRef.hostView as EmbeddedViewRef<NgxTailwindModalComponent>).rootNodes[0] as HTMLElement;
       this._appRef.attachView(componentRef.hostView);
       this._document.body.appendChild(domElem);
-
-      componentRef.instance.setData({
-        modalId: id,
-        modalInstance: componentRef.instance,
-      });
 
       return componentRef.instance;
     }
@@ -348,7 +344,7 @@ export class NgxTailwindModalService {
 
   private _initModal(modalInstance: ModalInstance) {
     modalInstance.modal.layerPosition += this.getModalStackCount();
-    this.addModal(modalInstance, modalInstance.modal.force);
+    this.addModal(modalInstance);
 
     if (modalInstance.modal.autostart) {
       this.open(modalInstance.id);
