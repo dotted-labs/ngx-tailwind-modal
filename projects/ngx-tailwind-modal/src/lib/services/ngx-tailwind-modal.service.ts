@@ -302,6 +302,12 @@ export class NgxTailwindModalService {
       const domElem = (componentRef.hostView as EmbeddedViewRef<NgxTailwindModalComponent>).rootNodes[0] as HTMLElement;
       this._appRef.attachView(componentRef.hostView);
       this._document.body.appendChild(domElem);
+
+      componentRef.instance.setData({
+        id: id,
+        modalInstance: componentRef.instance,
+      });
+
       return componentRef.instance;
     }
   }
