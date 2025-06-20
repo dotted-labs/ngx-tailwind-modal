@@ -1,0 +1,306 @@
+TITLE: Manage Modals with NgxTailwindModalService API
+DESCRIPTION: Demonstrates various methods provided by NgxTailwindModalService to open, close, toggle, get, set data, and create modals programmatically, offering full control over modal lifecycle.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/README.md#_snippet_8
+
+LANGUAGE: typescript
+CODE:
+```
+// Open a modal
+this.modalService.open('myModal');
+
+// Close a modal
+this.modalService.close('myModal');
+
+// Toggle a modal
+this.modalService.toggle('myModal');
+
+// Close all modals
+this.modalService.closeAll();
+
+// Get a modal instance
+const modal = this.modalService.getModal('myModal');
+
+// Set data to a modal
+this.modalService.setModalData({ key: 'value' }, 'myModal');
+
+// Get data from a modal
+const data = this.modalService.getModalData('myModal');
+
+// Create a modal programmatically
+this.modalService.create('dynamicModal', MyComponent, viewContainerRef);
+```
+
+----------------------------------------
+
+TITLE: NgxTailwindModalService API Reference
+DESCRIPTION: The `NgxTailwindModalService` provides a comprehensive set of methods for programmatically managing modals, including opening, closing, toggling, and retrieving modal instances or data.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/projects/ngx-tailwind-modal/README.md#_snippet_6
+
+LANGUAGE: APIDOC
+CODE:
+```
+NgxTailwindModalService:
+  open(modalId: string): void
+    Description: Opens a modal.
+    Parameters:
+      modalId: string - The unique identifier of the modal to open.
+  close(modalId: string): void
+    Description: Closes a modal.
+    Parameters:
+      modalId: string - The unique identifier of the modal to close.
+  toggle(modalId: string): void
+    Description: Toggles the open/closed state of a modal.
+    Parameters:
+      modalId: string - The unique identifier of the modal to toggle.
+  closeAll(): void
+    Description: Closes all currently open modals.
+  getModal(modalId: string): ModalInstance | undefined
+    Description: Retrieves a modal instance.
+    Parameters:
+      modalId: string - The unique identifier of the modal to retrieve.
+    Returns: ModalInstance | undefined - The modal instance if found, otherwise undefined.
+  setModalData(data: any, modalId: string): void
+    Description: Sets data to a modal.
+    Parameters:
+      data: any - The data object to set for the modal.
+      modalId: string - The unique identifier of the modal.
+  getModalData(modalId: string): any
+    Description: Retrieves data from a modal.
+    Parameters:
+      modalId: string - The unique identifier of the modal.
+    Returns: any - The data associated with the modal.
+  create(modalId: string, component: Type<any>, viewContainerRef: ViewContainerRef, options?: ModalOptions): ModalInstance
+    Description: Creates a modal programmatically.
+    Parameters:
+      modalId: string - A unique identifier for the new modal.
+      component: Type<any> - The Angular component to be rendered inside the modal.
+      viewContainerRef: ViewContainerRef - The ViewContainerRef to attach the modal to.
+      options?: ModalOptions - Optional configuration for the modal (e.g., dismissable).
+    Returns: ModalInstance - The created modal instance.
+```
+
+----------------------------------------
+
+TITLE: Open a custom modal using NgxTailwindModalService
+DESCRIPTION: Inject `NgxTailwindModalService` and `ViewContainerRef` into your main component. Use the `create` method to instantiate your custom modal component and then call `open()` to display it.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/projects/ngx-tailwind-modal/README.md#_snippet_5
+
+LANGUAGE: typescript
+CODE:
+```
+import { Component, inject, ViewContainerRef } from '@angular/core';
+import { NgxTailwindModalService } from '@ngx-tailwind-modal';
+import { MyModalComponent } from './my-modal.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: ` <button class="btn btn-primary" (click)="openModal()">Open Modal</button> `,
+})
+export class AppComponent {
+  private readonly modalService = inject(NgxTailwindModalService);
+  private readonly vcr = inject(ViewContainerRef);
+
+  public openModal() {
+    this.modalService
+      .create(`modal-${Math.random()}`, MyModalComponent, this.vcr, {
+        dismissable: true,
+      })
+      .open();
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Create enhanced Angular modal component with instance access
+DESCRIPTION: Defines an enhanced standalone Angular component (`MyEnhancedModalComponent`) that extends `NgxTailwindModalViewComponent` to gain access to `modalId` and `modalInstance`, allowing programmatic control (close, toggle) of the modal from within itself.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/README.md#_snippet_7
+
+LANGUAGE: typescript
+CODE:
+```
+import { Component } from '@angular/core';
+import { NgxTailwindModalViewComponent } from '@ngx-tailwind-modal';
+
+@Component({
+  selector: 'app-my-enhanced-modal',
+  standalone: true,
+  template: `
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Enhanced Modal</h3>
+      <p class="py-4">Modal ID: {{ modalId }}</p>
+      <p class="py-4">You can now control the modal from within the component!</p>
+      <div class="modal-action">
+        <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+        <button class="btn btn-primary" (click)="toggleModal()">Toggle</button>
+      </div>
+    </div>
+  `,
+})
+export class MyEnhancedModalComponent extends NgxTailwindModalViewComponent {
+  closeModal() {
+    // Close the modal using the modal instance
+    this.modalInstance.close();
+  }
+
+  toggleModal() {
+    // Toggle the modal using the modal instance
+    this.modalInstance.toggle();
+  }
+
+  // You can also access other modal methods like:
+  // this.modalInstance.open()
+  // this.modalInstance.setData(data)
+  // this.modalInstance.getData()
+}
+```
+
+----------------------------------------
+
+TITLE: Open a basic modal using NgxTailwindModalService
+DESCRIPTION: Demonstrates how to inject `NgxTailwindModalService` and `ViewContainerRef` to programmatically create and open a modal instance using the previously defined `MyModalComponent`.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/README.md#_snippet_6
+
+LANGUAGE: typescript
+CODE:
+```
+import { Component, inject, ViewContainerRef } from '@angular/core';
+import { NgxTailwindModalService } from '@ngx-tailwind-modal';
+import { MyModalComponent } from './my-modal.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: ` <button class="btn btn-primary" (click)="openModal()">Open Modal</button> `,
+})
+export class AppComponent {
+  private readonly modalService = inject(NgxTailwindModalService);
+  private readonly vcr = inject(ViewContainerRef);
+
+  public openModal() {
+    this.modalService
+      .create(`modal-${Math.random()}`, MyModalComponent, this.vcr, {
+        dismissable: true,
+      })
+      .open();
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Configure ngx-tailwind-modal providers in Angular
+DESCRIPTION: For standalone Angular applications, import `provideNgxTailwindModal` and add it to the `providers` array in `app.config.ts` to enable the modal service.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/projects/ngx-tailwind-modal/README.md#_snippet_2
+
+LANGUAGE: typescript
+CODE:
+```
+import { ApplicationConfig } from '@angular/core';
+import { provideNgxTailwindModal } from '@ngx-tailwind-modal';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    // ... other providers
+    provideNgxTailwindModal(),
+  ],
+};
+```
+
+----------------------------------------
+
+TITLE: Configure NgxTailwindModal providers in Angular
+DESCRIPTION: Adds `provideNgxTailwindModal()` to the `providers` array in `app.config.ts` for standalone Angular applications to enable the modal service.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/README.md#_snippet_3
+
+LANGUAGE: typescript
+CODE:
+```
+import { ApplicationConfig } from '@angular/core';
+import { provideNgxTailwindModal } from '@ngx-tailwind-modal';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    // ... other providers
+    provideNgxTailwindModal(),
+  ],
+};
+```
+
+----------------------------------------
+
+TITLE: Create a basic Angular modal component
+DESCRIPTION: Defines a standalone Angular component (`MyModalComponent`) that serves as the content for a modal, styled with DaisyUI classes. It includes a close button.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/README.md#_snippet_5
+
+LANGUAGE: typescript
+CODE:
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-my-modal',
+  standalone: true,
+  template: `
+    <div class="modal-box">
+      <h3 class="font-bold text-lg">Hello!</h3>
+      <p class="py-4">This is a modal with DaisyUI styles</p>
+      <div class="modal-action">
+        <button class="btn" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  `,
+})
+export class MyModalComponent {
+  closeModal() {
+    // Modal will be closed automatically when component is destroyed
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Create a custom modal component with DaisyUI styles
+DESCRIPTION: Define a standalone Angular component to serve as the content of your modal. This example demonstrates a basic modal structure with DaisyUI classes and a close button.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/projects/ngx-tailwind-modal/README.md#_snippet_4
+
+LANGUAGE: typescript
+CODE:
+```
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-my-modal',
+  standalone: true,
+  template: `<div class="modal-box">\n      <h3 class="font-bold text-lg">Hello!</h3>\n      <p class="py-4">This is a modal with DaisyUI styles</p>\n      <div class="modal-action">\n        <button class="btn" (click)="closeModal()">Close</button>\n      </div>\n    </div>\n  `,
+})
+export class MyModalComponent {
+  closeModal() {
+    // Modal will be closed automatically when component is destroyed
+  }
+}
+```
+
+----------------------------------------
+
+TITLE: Import NgxTailwindModalComponent into Angular component
+DESCRIPTION: Imports `NgxTailwindModalComponent` into an Angular standalone component's `imports` array for direct usage within its template.
+SOURCE: https://github.com/dotted-labs/ngx-tailwind-modal/blob/master/README.md#_snippet_4
+
+LANGUAGE: typescript
+CODE:
+```
+import { Component } from '@angular/core';
+import { NgxTailwindModalComponent } from '@ngx-tailwind-modal';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [NgxTailwindModalComponent],
+  templateUrl: './app.component.html',
+})
+export class AppComponent {
+  // ...
+}
+```
