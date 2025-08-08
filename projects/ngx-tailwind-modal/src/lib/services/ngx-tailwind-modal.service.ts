@@ -15,6 +15,20 @@ import { ModalInstance } from './modal-instance';
 import { NgxTailwindModalStackService } from './ngx-tailwind-modal-stack.service';
 import { INgxTailwindModalOptions, NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
 import { NgxTailwindModalViewComponent } from '../components/ngx-tailwind-modal-view.component';
+import { 
+  ConfirmationModalComponent, 
+  IConfirmationModalData, 
+  IConfirmationModalResult 
+} from '../components/confirmation-modal.component';
+import { 
+  InfoModalComponent, 
+  IInfoModalData 
+} from '../components/info-modal.component';
+import { 
+  InputModalComponent, 
+  IInputModalData, 
+  IInputModalResult 
+} from '../components/input-modal.component';
 
 export type Content<T> = string | TemplateRef<T> | Type<T>;
 
@@ -565,5 +579,128 @@ export class NgxTailwindModalService {
     }
 
     this._document.body.removeChild(modal.elementRef.nativeElement);
+  }
+
+  // Generic Modal Methods
+
+  /**
+   * Show a confirmation modal with customizable title, message, and buttons.
+   * Returns a Promise that resolves with the user's choice.
+   * 
+   * @param data Configuration for the confirmation modal
+   * @param options Optional modal configuration
+   * @returns Promise that resolves to IConfirmationModalResult
+   */
+  public showConfirmation(
+    data: IConfirmationModalData,
+    options: INgxTailwindModalOptions = {}
+  ): Promise<IConfirmationModalResult> {
+    return new Promise((resolve) => {
+      const modalId = `confirmation-modal-${Date.now()}`;
+      const defaultOptions: INgxTailwindModalOptions = {
+        dismissable: false,
+        escapable: true,
+        backdrop: true,
+        ...options
+      };
+
+      const modal = this.create(modalId, ConfirmationModalComponent, defaultOptions);
+      modal.setData(data);
+
+      // Subscribe to modal close events to resolve the promise
+      const closeSubscription = modal.onCloseFinished.subscribe(() => {
+        const result = modal.getData() as IConfirmationModalResult;
+        closeSubscription.unsubscribe();
+        resolve(result || { confirmed: false });
+      });
+
+      const dismissSubscription = modal.onDismissFinished.subscribe(() => {
+        const result: IConfirmationModalResult = { confirmed: false };
+        dismissSubscription.unsubscribe();
+        resolve(result);
+      });
+
+      modal.open();
+    });
+  }
+
+  /**
+   * Show an information modal with customizable title, message, and button.
+   * Optionally supports auto-close timer.
+   * 
+   * @param data Configuration for the information modal
+   * @param options Optional modal configuration
+   * @returns Promise that resolves when modal is closed
+   */
+  public showInfo(
+    data: IInfoModalData,
+    options: INgxTailwindModalOptions = {}
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      const modalId = `info-modal-${Date.now()}`;
+      const defaultOptions: INgxTailwindModalOptions = {
+        dismissable: true,
+        escapable: true,
+        backdrop: true,
+        ...options
+      };
+
+      const modal = this.create(modalId, InfoModalComponent, defaultOptions);
+      modal.setData(data);
+
+      // Subscribe to modal close events to resolve the promise
+      const closeSubscription = modal.onCloseFinished.subscribe(() => {
+        closeSubscription.unsubscribe();
+        resolve();
+      });
+
+      const dismissSubscription = modal.onDismissFinished.subscribe(() => {
+        dismissSubscription.unsubscribe();
+        resolve();
+      });
+
+      modal.open();
+    });
+  }
+
+  /**
+   * Show an input modal for collecting user input with validation.
+   * Returns a Promise that resolves with the input value or null if cancelled.
+   * 
+   * @param data Configuration for the input modal
+   * @param options Optional modal configuration
+   * @returns Promise that resolves to IInputModalResult
+   */
+  public showInput(
+    data: IInputModalData,
+    options: INgxTailwindModalOptions = {}
+  ): Promise<IInputModalResult> {
+    return new Promise((resolve) => {
+      const modalId = `input-modal-${Date.now()}`;
+      const defaultOptions: INgxTailwindModalOptions = {
+        dismissable: false,
+        escapable: true,
+        backdrop: true,
+        ...options
+      };
+
+      const modal = this.create(modalId, InputModalComponent, defaultOptions);
+      modal.setData(data);
+
+      // Subscribe to modal close events to resolve the promise
+      const closeSubscription = modal.onCloseFinished.subscribe(() => {
+        const result = modal.getData() as IInputModalResult;
+        closeSubscription.unsubscribe();
+        resolve(result || { value: null, cancelled: true });
+      });
+
+      const dismissSubscription = modal.onDismissFinished.subscribe(() => {
+        const result: IInputModalResult = { value: null, cancelled: true };
+        dismissSubscription.unsubscribe();
+        resolve(result);
+      });
+
+      modal.open();
+    });
   }
 }

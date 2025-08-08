@@ -108,6 +108,116 @@ export class ModalInstance {
 }
 ```
 
+## Generic Modal Components
+
+### Service Methods for Common Modals
+
+**Performance Note**: All generic modal components use Angular signals for reactive state management, eliminating template function calls and providing optimal performance.
+
+```typescript
+// Confirmation Modal - returns Promise<IConfirmationModalResult>
+showConfirmation(data: IConfirmationModalData, options?: INgxTailwindModalOptions): Promise<IConfirmationModalResult>
+
+// Information Modal - returns Promise<void>
+showInfo(data: IInfoModalData, options?: INgxTailwindModalOptions): Promise<void>
+
+// Input Modal - returns Promise<IInputModalResult>
+showInput(data: IInputModalData, options?: INgxTailwindModalOptions): Promise<IInputModalResult>
+```
+
+### Generic Modal Interfaces
+
+**ConfirmationModal:**
+```typescript
+interface IConfirmationModalData {
+  title?: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  variant?: 'success' | 'danger' | 'warning' | 'info';
+  icon?: string;
+}
+
+interface IConfirmationModalResult {
+  confirmed: boolean;
+}
+```
+
+**InfoModal:**
+```typescript
+interface IInfoModalData {
+  title?: string;
+  message: string;
+  buttonText?: string;
+  variant?: 'success' | 'error' | 'warning' | 'info';
+  icon?: string;
+  autoCloseTimer?: number; // milliseconds
+}
+```
+
+**InputModal:**
+```typescript
+interface IInputModalData {
+  title?: string;
+  message: string;
+  inputLabel?: string;
+  inputPlaceholder?: string;
+  confirmText?: string;
+  cancelText?: string;
+  inputType?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  defaultValue?: string;
+}
+
+interface IInputModalResult {
+  value: string | null;
+  cancelled: boolean;
+}
+```
+
+### Usage Examples
+
+**Confirmation Modal:**
+```typescript
+const result = await this.modalService.showConfirmation({
+  title: 'Delete Item',
+  message: 'Are you sure you want to delete this item?',
+  variant: 'danger'
+});
+
+if (result.confirmed) {
+  // User confirmed
+}
+```
+
+**Info Modal:**
+```typescript
+await this.modalService.showInfo({
+  title: 'Success',
+  message: 'Operation completed successfully!',
+  variant: 'success',
+  autoCloseTimer: 3000
+});
+```
+
+**Input Modal:**
+```typescript
+const result = await this.modalService.showInput({
+  title: 'Enter Name',
+  message: 'Please enter your name:',
+  inputType: 'text',
+  required: true,
+  minLength: 2
+});
+
+if (!result.cancelled) {
+  console.log('User entered:', result.value);
+}
+```
+
 ## Configuration
 
 ### Provider Setup
@@ -249,6 +359,10 @@ module.exports = {
 5. **Stack Management**: Use force parameter for modal priority
 6. **Accessibility**: Always include ARIA attributes
 7. **Cleanup**: Modals auto-cleanup on component destroy
+8. **Generic Modals**: Use showConfirmation, showInfo, showInput for common cases
+9. **Promise Handling**: All generic modals return promises for clean async/await usage
+10. **Validation**: InputModal includes built-in validation with various input types
+11. **Signals Architecture**: All generic components use Angular signals for optimal performance and reactive state management
 
 ## Testing Considerations
 

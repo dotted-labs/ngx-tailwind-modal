@@ -17,6 +17,7 @@ A modern Angular 19 library for creating beautiful, accessible modals with **zer
 - **🔄 Event System** - Comprehensive lifecycle events for modal states
 - **📱 Responsive Design** - Works seamlessly across all devices and screen sizes
 - **🎭 Multiple Themes** - Full support for all DaisyUI themes and customization
+- **📋 Generic Modals** - Pre-built confirmation, information, and input modals using Angular signals for optimal performance
 
 ## 🏗️ Architecture Overview
 
@@ -266,6 +267,178 @@ document.addEventListener('ngx-tailwind-modal.open', (e) => {
 - `onDismiss` / `onDismissFinished` - Modal dismissal (backdrop/escape)
 - `onDataAdded` / `onDataRemoved` - Data management events
 - `onEscape` - Escape key pressed
+
+## 📋 Generic Modal Components
+
+The library includes pre-built modal components for common use cases, accessible through simple service methods that return promises. All components use Angular signals for optimal performance and reactive state management.
+
+### Confirmation Modal
+
+Ask users to confirm or cancel actions with customizable messages and button variants.
+
+```typescript
+import { NgxTailwindModalService } from '@dotted-labs/ngx-tailwind-modal';
+
+async openConfirmation() {
+  const result = await this.modalService.showConfirmation({
+    title: 'Delete User',
+    message: 'Are you sure you want to delete this user? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    variant: 'danger', // success | danger | warning | info
+    icon: 'warning'
+  });
+
+  if (result.confirmed) {
+    // User clicked "Delete"
+    this.deleteUser();
+  } else {
+    // User clicked "Cancel" or closed modal
+    console.log('User cancelled deletion');
+  }
+}
+```
+
+**Configuration Options:**
+```typescript
+interface IConfirmationModalData {
+  title?: string;                    // Modal title
+  message: string;                   // Main message text
+  confirmText?: string;              // Confirm button text (default: "Confirm")
+  cancelText?: string;               // Cancel button text (default: "Cancel")
+  variant?: 'success' | 'danger' | 'warning' | 'info'; // Button and icon styling
+  icon?: string;                     // Optional icon display
+}
+```
+
+### Information Modal
+
+Display informational messages with optional auto-close functionality.
+
+```typescript
+async showSuccess() {
+  await this.modalService.showInfo({
+    title: 'Success!',
+    message: 'Your profile has been updated successfully.',
+    buttonText: 'Got it',
+    variant: 'success',
+    icon: 'success',
+    autoCloseTimer: 3000  // Auto-close after 3 seconds
+  });
+
+  console.log('Info modal was closed');
+}
+```
+
+**Configuration Options:**
+```typescript
+interface IInfoModalData {
+  title?: string;                    // Modal title
+  message: string;                   // Main message text
+  buttonText?: string;               // Button text (default: "OK")
+  variant?: 'success' | 'error' | 'warning' | 'info'; // Styling variant
+  icon?: string;                     // Optional icon display
+  autoCloseTimer?: number;           // Auto-close timer in milliseconds
+}
+```
+
+### Input Modal
+
+Collect user input with built-in validation support.
+
+```typescript
+async getUserInput() {
+  const result = await this.modalService.showInput({
+    title: 'Enter Your Name',
+    message: 'Please provide your full name for the registration.',
+    inputLabel: 'Full Name',
+    inputPlaceholder: 'Enter your name...',
+    confirmText: 'Submit',
+    cancelText: 'Cancel',
+    inputType: 'text',
+    required: true,
+    minLength: 2,
+    maxLength: 50
+  });
+
+  if (!result.cancelled && result.value) {
+    console.log('User entered:', result.value);
+    this.processUserName(result.value);
+  } else {
+    console.log('User cancelled input');
+  }
+}
+```
+
+**Configuration Options:**
+```typescript
+interface IInputModalData {
+  title?: string;                    // Modal title
+  message: string;                   // Main message text
+  inputLabel?: string;               // Input field label
+  inputPlaceholder?: string;         // Input placeholder text
+  confirmText?: string;              // Confirm button text (default: "Confirm")
+  cancelText?: string;               // Cancel button text (default: "Cancel")
+  inputType?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'; // Input type
+  required?: boolean;                // Whether input is required
+  minLength?: number;                // Minimum input length
+  maxLength?: number;                // Maximum input length
+  pattern?: string;                  // RegExp pattern for validation
+  defaultValue?: string;             // Default input value
+}
+```
+
+### Advanced Usage Examples
+
+**Chaining Multiple Modals:**
+```typescript
+async confirmDeleteWithInput() {
+  // First, get confirmation
+  const confirmation = await this.modalService.showConfirmation({
+    title: 'Confirm Deletion',
+    message: 'Type "DELETE" to confirm this action.',
+    variant: 'danger'
+  });
+
+  if (confirmation.confirmed) {
+    // Then collect confirmation text
+    const input = await this.modalService.showInput({
+      title: 'Final Confirmation',
+      message: 'Type "DELETE" exactly to proceed:',
+      inputType: 'text',
+      required: true,
+      pattern: '^DELETE$'
+    });
+
+    if (!input.cancelled && input.value === 'DELETE') {
+      // Show success message
+      await this.modalService.showInfo({
+        title: 'Deleted Successfully',
+        message: 'The item has been permanently deleted.',
+        variant: 'success',
+        autoCloseTimer: 2000
+      });
+    }
+  }
+}
+```
+
+**Custom Modal Options:**
+```typescript
+const result = await this.modalService.showConfirmation(
+  {
+    title: 'Custom Styled Confirmation',
+    message: 'This modal uses custom options.',
+    variant: 'warning'
+  },
+  {
+    escapable: false,        // Disable escape key
+    backdrop: false,         // Remove backdrop
+    customClass: 'my-modal', // Add custom CSS class
+    hideDelay: 200          // Faster close animation
+  }
+);
+```
 
 ## 📋 Usage Patterns
 

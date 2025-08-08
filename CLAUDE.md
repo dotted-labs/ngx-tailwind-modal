@@ -20,6 +20,14 @@ This is an Angular library project called `@dotted-labs/ngx-tailwind-modal`, bui
 - `NgxTailwindModalStackService` - Modal stack management
 - `ModalInstance` - Modal instance wrapper class
 
+### Generic Modal Components
+
+**Performance**: All generic components use Angular signals for reactive state management, eliminating template function calls.
+
+- `ConfirmationModalComponent` - Pre-built confirmation dialogs with customizable buttons and variants
+- `InfoModalComponent` - Information modals with optional auto-close timer
+- `InputModalComponent` - Input collection modals with validation support
+
 ### Service Architecture
 
 The library uses a centralized service pattern:
@@ -92,6 +100,7 @@ ng lint --fix
 - **Accessibility**: ARIA attributes and keyboard navigation support
 - **Focus Management**: Proper focus trapping and restoration
 - **Event System**: Comprehensive event emissions for all modal states
+- **Angular Signals**: Generic modal components use signals for optimal performance and reactive state management
 
 ### Configuration
 
@@ -116,6 +125,12 @@ Components extending `NgxTailwindModalViewComponent` get:
 - `open(id)`, `close(id)`, `toggle(id)` - Basic controls
 - `setModalData(data, id)`, `getModalData(id)` - Data management  
 - `getModalStack()`, `getOpenedModals()` - Stack inspection
+
+### Generic Modal Service Methods
+
+- `showConfirmation(data, options)` - Display confirmation dialog, returns Promise<IConfirmationModalResult>
+- `showInfo(data, options)` - Show information modal, returns Promise<void>
+- `showInput(data, options)` - Collect user input, returns Promise<IInputModalResult>
 
 ## Testing Setup
 
