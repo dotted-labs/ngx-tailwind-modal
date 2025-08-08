@@ -1,0 +1,265 @@
+# @dotted-labs/ngx-tailwind-modal - LLM Reference Guide
+
+## Overview
+Angular 19 modal library using Tailwind CSS and DaisyUI styling. Provides standalone components for modal management with programmatic API and declarative templates.
+
+## Architecture
+- **Service Pattern**: Centralized modal management
+- **Stack Management**: Z-index layering system
+- **Event System**: Custom browser events for lifecycle
+- **Standalone Components**: Angular 19 compatible
+- **Dynamic Creation**: Programmatic modal generation
+
+## Core Components
+
+### NgxTailwindModalService
+Primary API service for modal operations:
+
+```typescript
+// Creation
+create<T>(id: string, content: Content<T>, options?: INgxTailwindModalOptions): NgxTailwindModalComponent
+
+// Basic Operations
+open(id: string, force?: boolean): boolean
+close(id: string): boolean
+toggle(id: string, force?: boolean): boolean
+closeAll(): void
+
+// Data Management
+setModalData(data: unknown, id: string, force?: boolean): boolean
+getModalData(id: string): unknown
+resetModalData(id: string): unknown | boolean
+
+// Stack Inspection
+getModal(id: string): NgxTailwindModalComponent
+getModalStack(): ModalInstance[]
+getOpenedModals(): ModalInstance[]
+getTopOpenedModal(): NgxTailwindModalComponent
+getHigherIndex(): number
+getModalStackCount(): number
+
+// Lifecycle
+removeModal(id: string): void
+```
+
+### NgxTailwindModalComponent
+Core modal component with lifecycle management:
+
+**Properties:**
+- `identifier: string` - Unique modal ID (required)
+- `closable: boolean = true` - Show close button
+- `escapable: boolean = true` - Close on Escape key
+- `dismissable: boolean = true` - Close on backdrop click
+- `customClass: string` - CSS classes
+- `backdrop: boolean = true` - Show backdrop
+- `force: boolean = true` - Force override existing modal
+- `hideDelay: number = 500` - Close animation delay
+- `autostart: boolean = false` - Auto-open on creation
+- `target: string` - Position relative to element
+- `refocus: boolean = true` - Return focus after close
+
+**Accessibility:**
+- `ariaLabel: string` - ARIA label
+- `ariaLabelledBy: string` - ARIA labelledby
+- `ariaDescribedBy: string` - ARIA describedby
+
+**Events:**
+- `onOpen/onOpenFinished` - Open lifecycle
+- `onClose/onCloseFinished` - Close lifecycle
+- `onDismiss/onDismissFinished` - Dismiss lifecycle
+- `onEscape` - Escape key pressed
+- `onDataAdded/onDataRemoved` - Data changes
+
+**Methods:**
+```typescript
+open(top?: boolean): NgxTailwindModalComponent
+close(): NgxTailwindModalComponent
+dismiss(e: MouseEvent): NgxTailwindModalComponent
+toggle(top?: boolean): NgxTailwindModalComponent
+setData(data: unknown, force?: boolean): NgxTailwindModalComponent
+getData(): unknown
+removeData(): NgxTailwindModalComponent
+isVisible(): boolean
+hasData(): boolean
+```
+
+### NgxTailwindModalViewComponent
+Base class for modal content components:
+
+```typescript
+export class MyModalComponent extends NgxTailwindModalViewComponent {
+  // Automatically provided:
+  // this.modalId: string
+  // this.modalInstance: NgxTailwindModalComponent
+  
+  closeModal() {
+    this.modalInstance.close();
+  }
+}
+```
+
+### ModalInstance
+Wrapper containing modal ID and component reference:
+
+```typescript
+export class ModalInstance {
+  id: string;
+  modal: NgxTailwindModalComponent;
+}
+```
+
+## Configuration
+
+### Provider Setup
+```typescript
+// app.config.ts
+import { provideNgxTailwindModal } from '@dotted-labs/ngx-tailwind-modal';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideNgxTailwindModal()
+  ]
+};
+```
+
+### Options Interface
+```typescript
+interface INgxTailwindModalOptions {
+  closable?: boolean;
+  escapable?: boolean; 
+  dismissable?: boolean;
+  customClass?: string;
+  backdrop?: boolean;
+  force?: boolean;
+  hideDelay?: number;
+  autostart?: boolean;
+  target?: string;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  refocus?: boolean;
+}
+```
+
+## Usage Patterns
+
+### Programmatic Creation
+```typescript
+import { NgxTailwindModalService } from '@dotted-labs/ngx-tailwind-modal';
+
+constructor(private modalService: NgxTailwindModalService) {}
+
+openModal() {
+  this.modalService
+    .create('my-modal', MyModalComponent, {
+      dismissable: true,
+      customClass: 'custom-modal'
+    })
+    .open();
+}
+```
+
+### Template Declaration
+```html
+<ngx-tailwind-modal 
+  identifier="template-modal"
+  [closable]="true"
+  [dismissable]="true">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Modal Title</h3>
+    <p>Modal content...</p>
+  </div>
+</ngx-tailwind-modal>
+```
+
+### Modal Content Component
+```typescript
+@Component({
+  template: `
+    <div class="modal-box">
+      <h3>Enhanced Modal</h3>
+      <p>Modal ID: {{ modalId }}</p>
+      <button (click)="closeModal()">Close</button>
+    </div>
+  `
+})
+export class MyModalComponent extends NgxTailwindModalViewComponent {
+  closeModal() {
+    this.modalInstance.close();
+  }
+}
+```
+
+### Data Passing
+```typescript
+// Set data
+this.modalService.setModalData({ user: 'John' }, 'modal-id');
+
+// Get data in modal component
+ngOnInit() {
+  const data = this.modalInstance.getData();
+}
+```
+
+## Event System
+
+Custom browser events with prefix `ngx-tailwind-modal.`:
+- `ngx-tailwind-modal.create`
+- `ngx-tailwind-modal.open`  
+- `ngx-tailwind-modal.close`
+- `ngx-tailwind-modal.dismiss`
+- `ngx-tailwind-modal.toggle`
+- `ngx-tailwind-modal.delete`
+
+## Stack Management
+
+Modal layering system with z-index management:
+- Base z-index: 1041
+- Auto-incrementing for stacked modals
+- Top modal receives focus and keyboard events
+- Escape key closes top modal only
+
+## Accessibility Features
+
+- ARIA attributes support
+- Focus trapping within modal
+- Focus restoration after close
+- Keyboard navigation (Escape, Tab)
+- Role="dialog" assignment
+- Screen reader compatible
+
+## Styling Integration
+
+Requires Tailwind CSS with DaisyUI:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  safelist: ['modal', 'modal-backdrop', 'modal-box'],
+  plugins: [require('daisyui')]
+};
+```
+
+## Common Patterns for AI Agents
+
+1. **Modal Creation**: Always use unique IDs and proper options
+2. **Content Components**: Extend NgxTailwindModalViewComponent for modal access
+3. **Data Management**: Use setModalData/getModalData for state sharing
+4. **Lifecycle Handling**: Subscribe to events for complex workflows
+5. **Stack Management**: Use force parameter for modal priority
+6. **Accessibility**: Always include ARIA attributes
+7. **Cleanup**: Modals auto-cleanup on component destroy
+
+## Testing Considerations
+
+- Mock NgxTailwindModalService in tests
+- Test modal lifecycle events
+- Verify accessibility attributes
+- Test keyboard interactions
+- Mock browser event system for unit tests
+
+## Dependencies
+- Angular 19+
+- Tailwind CSS 4.x
+- DaisyUI 5.x
+- RxJS 7.x
