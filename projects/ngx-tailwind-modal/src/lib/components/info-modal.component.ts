@@ -14,47 +14,40 @@ export interface IInfoModalData {
   selector: 'ngx-info-modal',
   standalone: true,
   template: `
-    <div class="modal-box max-w-md">
-      <div class="flex items-start gap-4">
-        @if (modalData()?.icon || hasDefaultIcon()) {
-          <div class="flex-shrink-0">
-            <div [class]="iconClasses()">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path [attr.d]="iconPath()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-              </svg>
-            </div>
+    <div class="flex items-start gap-4">
+      @if (modalData()?.icon || hasDefaultIcon()) {
+        <div class="flex-shrink-0">
+          <div [class]="iconClasses()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path [attr.d]="iconPath()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
           </div>
-        }
-        
-        <div class="flex-1">
-          @if (modalData()?.title) {
-            <h3 class="font-bold text-lg mb-2" [class]="titleClasses()">
-              {{ modalData()?.title }}
-            </h3>
-          }
-          
-          <p class="py-2 text-sm text-base-content/80">
-            {{ modalData()?.message }}
-          </p>
-
-          @if (autoCloseTimer() && autoCloseTimer()! > 0) {
-            <p class="text-xs text-base-content/50 mt-2">
-              Auto-closing in {{ autoCloseCountdown() }} seconds...
-            </p>
-          }
         </div>
-      </div>
-      
-      <div class="modal-action justify-end mt-6">
-        <button 
-          type="button"
-          [class]="buttonClasses()"
-          (click)="onClose()">
-          {{ modalData()?.buttonText || 'OK' }}
-        </button>
+      }
+
+      <div class="flex-1">
+        @if (modalData()?.title) {
+          <h3 class="font-bold text-lg mb-2" [class]="titleClasses()">
+            {{ modalData()?.title }}
+          </h3>
+        }
+
+        <p class="py-2 text-sm text-base-content/80">
+          {{ modalData()?.message }}
+        </p>
+
+        @if (autoCloseTimer() && autoCloseTimer()! > 0) {
+          <p class="text-xs text-base-content/50 mt-2">Auto-closing in {{ autoCloseCountdown() }} seconds...</p>
+        }
       </div>
     </div>
-  `
+
+    <div class="modal-action justify-end mt-6">
+      <button type="button" [class]="buttonClasses()" (click)="onClose()">
+        {{ modalData()?.buttonText || 'OK' }}
+      </button>
+    </div>
+  `,
 })
 export class InfoModalComponent extends NgxTailwindModalViewComponent implements OnInit, OnDestroy {
   modalData = signal<IInfoModalData | undefined>(undefined);
@@ -68,7 +61,7 @@ export class InfoModalComponent extends NgxTailwindModalViewComponent implements
   iconClasses = computed(() => {
     const variant = this.modalData()?.variant || 'info';
     const baseClasses = 'w-12 h-12 rounded-full flex items-center justify-center';
-    
+
     switch (variant) {
       case 'success':
         return `${baseClasses} bg-success/20 text-success`;
@@ -84,7 +77,7 @@ export class InfoModalComponent extends NgxTailwindModalViewComponent implements
 
   titleClasses = computed(() => {
     const variant = this.modalData()?.variant || 'info';
-    
+
     switch (variant) {
       case 'success':
         return 'text-success';
@@ -100,7 +93,7 @@ export class InfoModalComponent extends NgxTailwindModalViewComponent implements
 
   buttonClasses = computed(() => {
     const variant = this.modalData()?.variant || 'info';
-    
+
     switch (variant) {
       case 'success':
         return 'btn btn-success';
@@ -116,7 +109,7 @@ export class InfoModalComponent extends NgxTailwindModalViewComponent implements
 
   iconPath = computed(() => {
     const variant = this.modalData()?.variant || 'info';
-    
+
     switch (variant) {
       case 'success':
         return 'M5 13l4 4L19 7';
@@ -134,7 +127,7 @@ export class InfoModalComponent extends NgxTailwindModalViewComponent implements
     const data = this.modalInstance.getData() as IInfoModalData;
     this.modalData.set(data);
     this.autoCloseTimer.set(data?.autoCloseTimer);
-    
+
     const timer = this.autoCloseTimer();
     if (timer && timer > 0) {
       this.startAutoCloseTimer();
@@ -159,20 +152,19 @@ export class InfoModalComponent extends NgxTailwindModalViewComponent implements
     if (!timer) return;
 
     this.autoCloseCountdown.set(Math.ceil(timer / 1000));
-    
+
     this.countdownInterval = window.setInterval(() => {
       const current = this.autoCloseCountdown();
       const newValue = current - 1;
       this.autoCloseCountdown.set(newValue);
-      
+
       if (newValue <= 0) {
         this.onClose();
       }
     }, 1000);
-    
+
     setTimeout(() => {
       this.onClose();
     }, timer);
   }
-
 }

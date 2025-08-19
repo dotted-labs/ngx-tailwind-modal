@@ -18,48 +18,40 @@ export interface IConfirmationModalResult {
   selector: 'ngx-confirmation-modal',
   standalone: true,
   template: `
-    <div class="modal-box max-w-md">
-      <div class="flex items-start gap-4">
-        @if (modalData()?.icon) {
-          <div class="flex-shrink-0">
-            <div [class]="iconClasses()">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path [attr.d]="iconPath()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-              </svg>
-            </div>
+    <div class="flex items-start gap-4">
+      @if (modalData()?.icon) {
+        <div class="flex-shrink-0">
+          <div [class]="iconClasses()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path [attr.d]="iconPath()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
           </div>
-        }
-        
-        <div class="flex-1">
-          @if (modalData()?.title) {
-            <h3 class="font-bold text-lg mb-2" [class]="titleClasses()">
-              {{ modalData()?.title }}
-            </h3>
-          }
-          
-          <p class="py-2 text-sm text-base-content/70">
-            {{ modalData()?.message }}
-          </p>
         </div>
-      </div>
-      
-      <div class="modal-action justify-end gap-3 mt-6">
-        <button 
-          type="button"
-          class="btn btn-ghost"
-          (click)="onCancel()">
-          {{ modalData()?.cancelText || 'Cancel' }}
-        </button>
-        
-        <button 
-          type="button"
-          [class]="confirmButtonClasses()"
-          (click)="onConfirm()">
-          {{ modalData()?.confirmText || 'Confirm' }}
-        </button>
+      }
+
+      <div class="flex-1">
+        @if (modalData()?.title) {
+          <h3 class="font-bold text-lg mb-2" [class]="titleClasses()">
+            {{ modalData()?.title }}
+          </h3>
+        }
+
+        <p class="py-2 text-sm text-base-content/70">
+          {{ modalData()?.message }}
+        </p>
       </div>
     </div>
-  `
+
+    <div class="modal-action justify-end gap-3 mt-6">
+      <button type="button" class="btn btn-ghost" (click)="onCancel()">
+        {{ modalData()?.cancelText || 'Cancel' }}
+      </button>
+
+      <button type="button" [class]="confirmButtonClasses()" (click)="onConfirm()">
+        {{ modalData()?.confirmText || 'Confirm' }}
+      </button>
+    </div>
+  `,
 })
 export class ConfirmationModalComponent extends NgxTailwindModalViewComponent implements OnInit {
   modalData = signal<IConfirmationModalData | undefined>(undefined);
@@ -68,7 +60,7 @@ export class ConfirmationModalComponent extends NgxTailwindModalViewComponent im
   iconClasses = computed(() => {
     const variant = this.modalData()?.variant || 'info';
     const baseClasses = 'w-12 h-12 rounded-full flex items-center justify-center';
-    
+
     switch (variant) {
       case 'success':
         return `${baseClasses} bg-success/20 text-success`;
@@ -84,7 +76,7 @@ export class ConfirmationModalComponent extends NgxTailwindModalViewComponent im
 
   titleClasses = computed(() => {
     const variant = this.modalData()?.variant || 'info';
-    
+
     switch (variant) {
       case 'success':
         return 'text-success';
@@ -100,7 +92,7 @@ export class ConfirmationModalComponent extends NgxTailwindModalViewComponent im
 
   confirmButtonClasses = computed(() => {
     const variant = this.modalData()?.variant || 'info';
-    
+
     switch (variant) {
       case 'success':
         return 'btn btn-success';
@@ -116,7 +108,7 @@ export class ConfirmationModalComponent extends NgxTailwindModalViewComponent im
 
   iconPath = computed(() => {
     const variant = this.modalData()?.variant || 'info';
-    
+
     switch (variant) {
       case 'success':
         return 'M5 13l4 4L19 7';

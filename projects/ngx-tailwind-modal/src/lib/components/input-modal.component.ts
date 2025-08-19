@@ -26,70 +26,62 @@ export interface IInputModalResult {
   standalone: true,
   imports: [],
   template: `
-    <div class="modal-box max-w-md">
-      <div>
-        @if (modalData()?.title) {
-          <h3 class="font-bold text-lg mb-2">
-            {{ modalData()?.title }}
-          </h3>
-        }
-        
-        <p class="py-2 text-sm text-base-content/80">
-          {{ modalData()?.message }}
-        </p>
+    <div>
+      @if (modalData()?.title) {
+        <h3 class="font-bold text-lg mb-2">
+          {{ modalData()?.title }}
+        </h3>
+      }
 
-        <div class="form-control mt-4">
-          @if (modalData()?.inputLabel) {
-            <label class="label">
-              <span class="label-text">
-                {{ modalData()?.inputLabel }}
-                @if (modalData()?.required) {
-                  <span class="text-error">*</span>
-                }
-              </span>
-            </label>
-          }
-          
-          <input 
-            #inputElement
-            [type]="modalData()?.inputType || 'text'"
-            [placeholder]="modalData()?.inputPlaceholder || ''"
-            [value]="inputValue()"
-            (input)="onInputChange($event)"
-            [attr.required]="modalData()?.required ? true : null"
-            [attr.minlength]="modalData()?.minLength || null"
-            [attr.maxlength]="modalData()?.maxLength || null"
-            [attr.pattern]="modalData()?.pattern || null"
-            class="input input-bordered w-full"
-            [class.input-error]="showValidationError()"
-            (keyup.enter)="onConfirm()" />
-          
-          @if (showValidationError()) {
-            <label class="label">
-              <span class="label-text-alt text-error">{{ validationErrorMessage() }}</span>
-            </label>
-          }
-        </div>
-      </div>
-      
-      <div class="modal-action justify-end gap-3 mt-6">
-        <button 
-          type="button"
-          class="btn btn-ghost"
-          (click)="onCancel()">
-          {{ modalData()?.cancelText || 'Cancel' }}
-        </button>
-        
-        <button 
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!isInputValid()"
-          (click)="onConfirm()">
-          {{ modalData()?.confirmText || 'Confirm' }}
-        </button>
+      <p class="py-2 text-sm text-base-content/80">
+        {{ modalData()?.message }}
+      </p>
+
+      <div class="form-control mt-4">
+        @if (modalData()?.inputLabel) {
+          <label class="label">
+            <span class="label-text">
+              {{ modalData()?.inputLabel }}
+              @if (modalData()?.required) {
+                <span class="text-error">*</span>
+              }
+            </span>
+          </label>
+        }
+
+        <input
+          #inputElement
+          [type]="modalData()?.inputType || 'text'"
+          [placeholder]="modalData()?.inputPlaceholder || ''"
+          [value]="inputValue()"
+          (input)="onInputChange($event)"
+          [attr.required]="modalData()?.required ? true : null"
+          [attr.minlength]="modalData()?.minLength || null"
+          [attr.maxlength]="modalData()?.maxLength || null"
+          [attr.pattern]="modalData()?.pattern || null"
+          class="input input-bordered w-full"
+          [class.input-error]="showValidationError()"
+          (keyup.enter)="onConfirm()"
+        />
+
+        @if (showValidationError()) {
+          <label class="label">
+            <span class="label-text-alt text-error">{{ validationErrorMessage() }}</span>
+          </label>
+        }
       </div>
     </div>
-  `
+
+    <div class="modal-action justify-end gap-3 mt-6">
+      <button type="button" class="btn btn-ghost" (click)="onCancel()">
+        {{ modalData()?.cancelText || 'Cancel' }}
+      </button>
+
+      <button type="button" class="btn btn-primary" [disabled]="!isInputValid()" (click)="onConfirm()">
+        {{ modalData()?.confirmText || 'Confirm' }}
+      </button>
+    </div>
+  `,
 })
 export class InputModalComponent extends NgxTailwindModalViewComponent implements OnInit, AfterViewInit {
   modalData = signal<IInputModalData | undefined>(undefined);
@@ -100,7 +92,7 @@ export class InputModalComponent extends NgxTailwindModalViewComponent implement
   isInputValid = computed(() => {
     const data = this.modalData();
     const value = this.inputValue().trim();
-    
+
     // Check required
     if (data?.required && !value) {
       return false;
@@ -157,7 +149,7 @@ export class InputModalComponent extends NgxTailwindModalViewComponent implement
   validationErrorMessage = computed(() => {
     const data = this.modalData();
     const value = this.inputValue().trim();
-    
+
     if (data?.required && !value) {
       return 'This field is required';
     }
@@ -215,18 +207,18 @@ export class InputModalComponent extends NgxTailwindModalViewComponent implement
       return;
     }
 
-    const result: IInputModalResult = { 
-      value: this.inputValue().trim(), 
-      cancelled: false 
+    const result: IInputModalResult = {
+      value: this.inputValue().trim(),
+      cancelled: false,
     };
     this.modalInstance.setData(result);
     this.modalInstance.close();
   }
 
   onCancel() {
-    const result: IInputModalResult = { 
-      value: null, 
-      cancelled: true 
+    const result: IInputModalResult = {
+      value: null,
+      cancelled: true,
     };
     this.modalInstance.setData(result);
     this.modalInstance.close();
@@ -235,10 +227,9 @@ export class InputModalComponent extends NgxTailwindModalViewComponent implement
   onInputChange(event: Event) {
     const target = event.target as HTMLInputElement;
     this.inputValue.set(target.value);
-    
+
     if (this.showValidationError()) {
       this.showValidationError.set(false);
     }
   }
-
 }
