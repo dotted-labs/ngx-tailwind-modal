@@ -20,7 +20,7 @@ import {
   ViewChildren,
   ViewContainerRef,
 } from '@angular/core';
-import { NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
+import { NgxTailwindModalConfig, ModalDisplayMode, SidebarPosition } from '../config/ngx-tailwind-modal.config';
 
 @Component({
   selector: 'ngx-tailwind-modal',
@@ -43,6 +43,11 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
   @Input() public ariaLabelledBy: string | null = null;
   @Input() public ariaDescribedBy: string | null = null;
   @Input() public refocus = true;
+  
+  // Sidebar specific inputs
+  @Input() public displayMode: ModalDisplayMode = 'modal';
+  @Input() public sidebarPosition: SidebarPosition = 'right';
+  @Input() public sidebarWidth = 'w-80';
 
   @Output() public visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() public onClose: EventEmitter<any> = new EventEmitter();
@@ -265,6 +270,24 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
     }
 
     this._changeDetectorRef.markForCheck();
+    
+    // Sync drawer checkbox state for sidebar mode
+    this._syncDrawerCheckbox();
+  }
+
+  /**
+   * Synchronizes the drawer checkbox state with the modal visibility
+   * This ensures DaisyUI drawer animations work correctly
+   */
+  private _syncDrawerCheckbox(): void {
+    if (this.displayMode === 'sidebar' && this.isBrowser) {
+      const drawerId = `drawer-${this.identifier}`;
+      const drawerCheckbox = this._document.getElementById(drawerId) as HTMLInputElement;
+      
+      if (drawerCheckbox) {
+        drawerCheckbox.checked = this.visible && this.openedClass;
+      }
+    }
   }
 
   /**

@@ -3,6 +3,9 @@ export const NgxTailwindModalConfig = {
   prefixEvent: 'ngx-tailwind-modal.',
 };
 
+export type ModalDisplayMode = 'modal' | 'sidebar';
+export type SidebarPosition = 'left' | 'right';
+
 export interface INgxTailwindModalOptions {
   closable?: boolean;
   escapable?: boolean;
@@ -17,4 +20,8 @@ export interface INgxTailwindModalOptions {
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
   refocus?: boolean;
+  // Sidebar options
+  displayMode?: ModalDisplayMode;
+  sidebarPosition?: SidebarPosition;
+  sidebarWidth?: string;
 }

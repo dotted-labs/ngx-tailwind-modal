@@ -13,7 +13,7 @@ import {
 import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.component';
 import { ModalInstance } from './modal-instance';
 import { NgxTailwindModalStackService } from './ngx-tailwind-modal-stack.service';
-import { INgxTailwindModalOptions, NgxTailwindModalConfig } from '../config/ngx-tailwind-modal.config';
+import { INgxTailwindModalOptions, NgxTailwindModalConfig, ModalDisplayMode, SidebarPosition } from '../config/ngx-tailwind-modal.config';
 import { NgxTailwindModalViewComponent } from '../components/ngx-tailwind-modal-view.component';
 import { 
   ConfirmationModalComponent, 
@@ -312,6 +312,15 @@ export class NgxTailwindModalService {
       }
       if (typeof options.refocus === 'boolean') {
         componentRef.instance.refocus = options.refocus;
+      }
+      if (typeof options.displayMode === 'string') {
+        componentRef.instance.displayMode = options.displayMode;
+      }
+      if (typeof options.sidebarPosition === 'string') {
+        componentRef.instance.sidebarPosition = options.sidebarPosition;
+      }
+      if (typeof options.sidebarWidth === 'string') {
+        componentRef.instance.sidebarWidth = options.sidebarWidth;
       }
 
       (componentRef.instance as unknown as NgxTailwindModalViewComponent).modalId = id;
@@ -685,6 +694,165 @@ export class NgxTailwindModalService {
       };
 
       const modal = this.create(modalId, InputModalComponent, defaultOptions);
+      modal.setData(data);
+
+      // Subscribe to modal close events to resolve the promise
+      const closeSubscription = modal.onCloseFinished.subscribe(() => {
+        const result = modal.getData() as IInputModalResult;
+        closeSubscription.unsubscribe();
+        resolve(result || { value: null, cancelled: true });
+      });
+
+      const dismissSubscription = modal.onDismissFinished.subscribe(() => {
+        const result: IInputModalResult = { value: null, cancelled: true };
+        dismissSubscription.unsubscribe();
+        resolve(result);
+      });
+
+      modal.open();
+    });
+  }
+
+  // Sidebar Methods
+
+  /**
+   * Create dynamic NgxTailwindModalComponent in sidebar mode
+   * @param id The modal identifier used at creation time
+   * @param content The modal content (string, templateRef or Component)
+   * @param options Any NgxTailwindModalComponent available options (will be extended with sidebar defaults)
+   */
+  public createSidebar<T>(
+    id: string, 
+    content: Content<T>, 
+    options: Omit<INgxTailwindModalOptions, 'displayMode'> & { 
+      position?: SidebarPosition;
+      width?: string; 
+    } = {}
+  ) {
+    const sidebarOptions: INgxTailwindModalOptions = {
+      displayMode: 'sidebar',
+      sidebarPosition: options.position || 'right',
+      sidebarWidth: options.width || 'w-80',
+      backdrop: false, // Sidebars typically don't need backdrop
+      dismissable: true,
+      escapable: true,
+      ...options
+    };
+
+    return this.create(id, content, sidebarOptions);
+  }
+
+  /**
+   * Show a confirmation modal in sidebar mode with customizable title, message, and buttons.
+   * Returns a Promise that resolves with the user's choice.
+   * 
+   * @param data Configuration for the confirmation modal
+   * @param options Optional sidebar configuration
+   * @returns Promise that resolves to IConfirmationModalResult
+   */
+  public showSidebarConfirmation(
+    data: IConfirmationModalData,
+    options: { position?: SidebarPosition; width?: string } & Omit<INgxTailwindModalOptions, 'displayMode'> = {}
+  ): Promise<IConfirmationModalResult> {
+    return new Promise((resolve) => {
+      const modalId = `confirmation-sidebar-${Date.now()}`;
+      const sidebarOptions: INgxTailwindModalOptions = {
+        displayMode: 'sidebar',
+        sidebarPosition: options.position || 'right',
+        sidebarWidth: options.width || 'w-80',
+        dismissable: false,
+        escapable: true,
+        backdrop: false,
+        ...options
+      };
+
+      const modal = this.create(modalId, ConfirmationModalComponent, sidebarOptions);
+      modal.setData(data);
+
+      // Subscribe to modal close events to resolve the promise
+      const closeSubscription = modal.onCloseFinished.subscribe(() => {
+        const result = modal.getData() as IConfirmationModalResult;
+        closeSubscription.unsubscribe();
+        resolve(result || { confirmed: false });
+      });
+
+      const dismissSubscription = modal.onDismissFinished.subscribe(() => {
+        const result: IConfirmationModalResult = { confirmed: false };
+        dismissSubscription.unsubscribe();
+        resolve(result);
+      });
+
+      modal.open();
+    });
+  }
+
+  /**
+   * Show an information modal in sidebar mode with customizable title, message, and button.
+   * Optionally supports auto-close timer.
+   * 
+   * @param data Configuration for the information modal
+   * @param options Optional sidebar configuration
+   * @returns Promise that resolves when modal is closed
+   */
+  public showSidebarInfo(
+    data: IInfoModalData,
+    options: { position?: SidebarPosition; width?: string } & Omit<INgxTailwindModalOptions, 'displayMode'> = {}
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      const modalId = `info-sidebar-${Date.now()}`;
+      const sidebarOptions: INgxTailwindModalOptions = {
+        displayMode: 'sidebar',
+        sidebarPosition: options.position || 'right',
+        sidebarWidth: options.width || 'w-80',
+        dismissable: true,
+        escapable: true,
+        backdrop: false,
+        ...options
+      };
+
+      const modal = this.create(modalId, InfoModalComponent, sidebarOptions);
+      modal.setData(data);
+
+      // Subscribe to modal close events to resolve the promise
+      const closeSubscription = modal.onCloseFinished.subscribe(() => {
+        closeSubscription.unsubscribe();
+        resolve();
+      });
+
+      const dismissSubscription = modal.onDismissFinished.subscribe(() => {
+        dismissSubscription.unsubscribe();
+        resolve();
+      });
+
+      modal.open();
+    });
+  }
+
+  /**
+   * Show an input modal in sidebar mode for collecting user input with validation.
+   * Returns a Promise that resolves with the input value or null if cancelled.
+   * 
+   * @param data Configuration for the input modal
+   * @param options Optional sidebar configuration
+   * @returns Promise that resolves to IInputModalResult
+   */
+  public showSidebarInput(
+    data: IInputModalData,
+    options: { position?: SidebarPosition; width?: string } & Omit<INgxTailwindModalOptions, 'displayMode'> = {}
+  ): Promise<IInputModalResult> {
+    return new Promise((resolve) => {
+      const modalId = `input-sidebar-${Date.now()}`;
+      const sidebarOptions: INgxTailwindModalOptions = {
+        displayMode: 'sidebar',
+        sidebarPosition: options.position || 'right',
+        sidebarWidth: options.width || 'w-80',
+        dismissable: false,
+        escapable: true,
+        backdrop: false,
+        ...options
+      };
+
+      const modal = this.create(modalId, InputModalComponent, sidebarOptions);
       modal.setData(data);
 
       // Subscribe to modal close events to resolve the promise

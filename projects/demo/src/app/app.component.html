@@ -3,13 +3,42 @@
     <h1 class="text-3xl font-bold text-primary">Demonstration of ngx-tailwind-modal library</h1>
   </header>
 
-  <main class="w-full max-w-md">
+  <main class="w-full max-w-4xl space-y-6">
+    <!-- Basic Modal Example -->
     <section class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title text-secondary">Basic Modal Example</h2>
         <p>Click the button below to open a basic modal</p>
         <div class="card-actions justify-end mt-4">
           <button class="btn btn-primary" (click)="openModal()">Open Modal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sidebar Examples -->
+    <section class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title text-accent">Sidebar Modal Examples</h2>
+        <p>Test the new sidebar functionality with different positions and types</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="space-y-2">
+            <h3 class="font-semibold">Custom Sidebars</h3>
+            <button class="btn btn-accent btn-sm w-full" (click)="openSidebar('right')">
+              Open Right Sidebar
+            </button>
+            <button class="btn btn-accent btn-sm w-full" (click)="openSidebar('left')">
+              Open Left Sidebar
+            </button>
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-semibold">Generic Sidebars</h3>
+            <button class="btn btn-secondary btn-sm w-full" (click)="openSidebarConfirmation()">
+              Sidebar Confirmation
+            </button>
+            <button class="btn btn-info btn-sm w-full" (click)="openSidebarInfo()">
+              Sidebar Info
+            </button>
+          </div>
         </div>
       </div>
     </section>
