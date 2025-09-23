@@ -26,6 +26,10 @@ import { NgxTailwindModalConfig, ModalDisplayMode, SidebarPosition } from '../co
   selector: 'ngx-tailwind-modal',
   imports: [CommonModule],
   templateUrl: './ngx-tailwind-modal.component.html',
+  host: {
+    position: 'relative',
+    'z-index': '1000000000',
+  },
 })
 export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() public closable = true;
@@ -43,7 +47,7 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
   @Input() public ariaLabelledBy: string | null = null;
   @Input() public ariaDescribedBy: string | null = null;
   @Input() public refocus = true;
-  
+
   // Sidebar specific inputs
   @Input() public displayMode: ModalDisplayMode = 'modal';
   @Input() public sidebarPosition: SidebarPosition = 'right';
@@ -270,7 +274,7 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
     }
 
     this._changeDetectorRef.markForCheck();
-    
+
     // Sync drawer checkbox state for sidebar mode
     this._syncDrawerCheckbox();
   }
@@ -283,7 +287,7 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
     if (this.displayMode === 'sidebar' && this.isBrowser) {
       const drawerId = `drawer-${this.identifier}`;
       const drawerCheckbox = this._document.getElementById(drawerId) as HTMLInputElement;
-      
+
       if (drawerCheckbox) {
         drawerCheckbox.checked = this.visible && this.openedClass;
       }
