@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
@@ -19,12 +19,13 @@ import {
   ViewChild,
   ViewChildren,
   ViewContainerRef,
+  DOCUMENT
 } from '@angular/core';
 import { NgxTailwindModalConfig, ModalDisplayMode, SidebarPosition } from '../config/ngx-tailwind-modal.config';
 
 @Component({
   selector: 'ngx-tailwind-modal',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './ngx-tailwind-modal.component.html',
   host: {
     position: 'relative',
@@ -267,12 +268,6 @@ export class NgxTailwindModalComponent implements OnInit, OnDestroy, AfterViewCh
   }
 
   public markForCheck() {
-    try {
-      this._changeDetectorRef.detectChanges();
-    } catch (e) {
-      /* empty */
-    }
-
     this._changeDetectorRef.markForCheck();
 
     // Sync drawer checkbox state for sidebar mode

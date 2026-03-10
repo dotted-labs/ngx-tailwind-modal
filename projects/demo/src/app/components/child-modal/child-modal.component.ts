@@ -1,5 +1,5 @@
 import { Component, inject, ViewContainerRef } from '@angular/core';
-import { NgxTailwindModalService } from '../../../../../ngx-tailwind-modal/src/lib/services/ngx-tailwind-modal.service';
+import { NgxTailwindModalService } from '@dotted-labs/ngx-tailwind-modal';
 
 @Component({
   selector: 'app-child-modal',

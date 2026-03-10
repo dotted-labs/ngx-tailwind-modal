@@ -1,4 +1,4 @@
-import { NgxTailwindModalComponent } from '.';
+import { NgxTailwindModalComponent } from './ngx-tailwind-modal.component';
 
 export class NgxTailwindModalViewComponent {
   public modalId!: string;

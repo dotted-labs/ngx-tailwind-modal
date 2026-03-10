@@ -1,4 +1,4 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   ApplicationRef,
   createComponent,
@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   TemplateRef,
   Type,
+  DOCUMENT
 } from '@angular/core';
 import { NgxTailwindModalComponent } from '../components/ngx-tailwind-modal.component';
 import { ModalInstance } from './modal-instance';

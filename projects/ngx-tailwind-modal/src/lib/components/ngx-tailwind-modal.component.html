@@ -3,12 +3,8 @@
   <!-- Sidebar/Drawer Structure -->
   <div
     [style.z-index]="visible ? layerPosition - 1 : -1"
-    [ngClass]="{
-      'drawer': true,
-      'drawer-end': sidebarPosition === 'right',
-      'fixed inset-0': true
-    }"
-    class="z-1040"
+    class="drawer fixed inset-0 z-1040"
+    [class.drawer-end]="sidebarPosition === 'right'"
     #nsmOverlay
   >
     <input 
@@ -31,11 +27,7 @@
       ></label>
       
       <div
-        [ngClass]="[
-          'menu bg-base-200 min-h-full p-4',
-          sidebarWidth,
-          customClass
-        ]"
+        [class]="'menu bg-base-200 min-h-full p-4 ' + sidebarWidth + ' ' + customClass"
         [style.z-index]="visible ? layerPosition : -1"
         #nsmDialog
         #nsmContent
@@ -64,19 +56,14 @@
   <!-- Standard Modal Structure -->
   <div
     [style.z-index]="visible ? layerPosition - 1 : -1"
-    [ngClass]="{
-      'bg-transparent': !backdrop,
-      'fixed inset-0 overflow-x-hidden overflow-y-auto transition-colors duration-500': true,
-      'bg-black/50': openedClass && backdrop,
-      'h-screen': true,
-      'w-screen': true,
-    }"
-    class="z-1040 block w-screen h-screen"
+    class="fixed inset-0 overflow-x-hidden overflow-y-auto transition-colors duration-500 h-screen w-screen z-1040 block"
+    [class.bg-transparent]="!backdrop"
+    [class.bg-black\/50]="openedClass && backdrop"
     #nsmOverlay
   >
     <div
       [style.z-index]="visible ? layerPosition : -1"
-      [ngClass]="['relative outline-none', customClass, openedClass ? 'opacity-100 visible' : 'opacity-0']"
+      [class]="'relative outline-none ' + customClass + ' ' + (openedClass ? 'opacity-100 visible' : 'opacity-0')"
       #nsmDialog
       [attr.aria-hidden]="openedClass ? false : true"
       [attr.aria-label]="ariaLabel"
